@@ -70,7 +70,7 @@ export default function App() {
   };
 
   return (
-    <main className="min-h-screen bg-[#f0f4fa] text-slate-700 font-sans tracking-normal antialiased flex flex-col items-center justify-center py-10 px-4">
+    <main className="min-h-screen bg-[#e4ecf5] text-slate-700 font-sans tracking-normal antialiased flex flex-col items-center justify-center py-10 px-4">
       
       <article className="w-full max-w-[440px] space-y-3.5">
         
