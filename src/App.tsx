@@ -1,58 +1,52 @@
 import { useState } from 'react';
 
-const OUTFITTERS_RECEIPT_DATA = {
-  brandName: "OUTFITTERS",
+const LOGO_RECEIPT_DATA = {
+  brandName: "LOGO",
   taxFormation: "RTO Lahore",
-  invoiceNo: "88412",
+  invoiceNo: "LG-2026-88412",
   date: "17/07/2026 05:20:10 PM",
-  ntn: "B992140",
+  ntn: "NTN-4139821-4",
   cashier: "ALI.RAZA",
-  billTo: "WALK-IN CUSTOMER",
-  strn: "4421890321112",
-  storeAddress: "Shop # 12, Ground Floor, Emporium Mall, Johar Town, Lahore",
-  timings: "Open 10:00am - 12:00am",
-  
-  // Top Banner Slides - New Arrivals focus
+  billTo: "Zain Ul Hassan",
+  strn: "STRN-3211124421890",
+  storeAddress: "24 km Ferozepur Road, Lahore, Pakistan",
+  timings: "Open 11:00 AM - 11:00 PM",
+
   topBanners: [
     {
-      img: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80",
-      text: "NEW ARRIVALS - STREETWEAR '26"
+      img: "logo2.webp",
+      text: "NEW IN: PREMIUM SUMMER SANDLES & SNEAKERS"
     },
     {
-      img: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=800&q=80",
-      text: "SUMMER ESSENTIALS DROP"
-    },
-    {
-      img: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80",
-      text: "URBAN ESSENTIALS CO."
+      img: "logo3.webp",
+      text: "HANDCRAFTED LUXURY LEATHER LOAFERS"
     }
   ],
 
-  // Bottom Banner Slides - Store End Promo focus
   bottomBanners: [
     {
-      img: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&w=800&q=80",
-      text: "FLAT 30% OFF ON SELECTED ITEMS"
+      img: "men.webp",
+      text: "DOT SALE: BUY 1 GET 1 FREE ENDS SOON"
     },
     {
-      img: "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=80",
-      text: "PREMIUM LEATHERWEAR DEALS"
+      img: "banner.webp",
+      text: "EXCLUSIVE WESTFORD WALLET SERIES"
     }
   ],
 
   items: [
-    { name: "MENS OVERSIZED TEE - BLACK", qty: 2, price: 2490, gstPercent: 18 },
-    { name: "CARGO PANTS - OLIVE", qty: 1, price: 4500, gstPercent: 18 }
+    { name: "LOGO MONTELARION LOAFER - TAN", qty: 1, price: 9594, gstPercent: 18 },
+    { name: "LOGO KINGSFORDON CARD HOLDER", qty: 1, price: 2450, gstPercent: 18 }
   ],
   summary: {
-    total: 9480,
-    discount: 500, 
-    gst: 1616.40,
+    total: 12044,
+    discount: 1500,
+    gst: 1897.92,
     posFee: 5,
-    payable: 10601.40
+    payable: 12446.92
   },
   paymentMode: "Card (HBL Debit)",
-  receiptId: "9982736154129983120092837123"
+  receiptId: "LGO9982736154129983120092837123"
 };
 
 export default function App() {
@@ -61,150 +55,167 @@ export default function App() {
   const [feedback, setFeedback] = useState<string | null>(null);
 
   const nextTopSlide = () => {
-    setTopSlide((prev) => (prev + 1) % OUTFITTERS_RECEIPT_DATA.topBanners.length);
+    setTopSlide((prev) => (prev + 1) % LOGO_RECEIPT_DATA.topBanners.length);
   };
 
   const prevTopSlide = () => {
-    setTopSlide((prev) => (prev - 1 + OUTFITTERS_RECEIPT_DATA.topBanners.length) % OUTFITTERS_RECEIPT_DATA.topBanners.length);
+    setTopSlide((prev) => (prev - 1 + LOGO_RECEIPT_DATA.topBanners.length) % LOGO_RECEIPT_DATA.topBanners.length);
   };
 
   const nextBottomSlide = () => {
-    setBottomSlide((prev) => (prev + 1) % OUTFITTERS_RECEIPT_DATA.bottomBanners.length);
+    setBottomSlide((prev) => (prev + 1) % LOGO_RECEIPT_DATA.bottomBanners.length);
   };
 
   const prevBottomSlide = () => {
-    setBottomSlide((prev) => (prev - 1 + OUTFITTERS_RECEIPT_DATA.bottomBanners.length) % OUTFITTERS_RECEIPT_DATA.bottomBanners.length);
+    setBottomSlide((prev) => (prev - 1 + LOGO_RECEIPT_DATA.bottomBanners.length) % LOGO_RECEIPT_DATA.bottomBanners.length);
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased flex flex-col items-center justify-center py-6 px-4 md:py-12">
-      
-      <article className="w-full max-w-md bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
-        
-        {/* Invoice Header */}
-        <header className="p-6 text-center border-b border-dashed border-slate-200">
-          <h1 className="text-3xl font-black tracking-widest text-slate-900">{OUTFITTERS_RECEIPT_DATA.brandName}</h1>
-          <p className="text-xs text-slate-500 font-semibold tracking-wider mt-1">Tax Formation: {OUTFITTERS_RECEIPT_DATA.taxFormation}</p>
-          
-          <section className="mt-6 bg-slate-50 p-4 rounded-xl text-left text-xs text-slate-600 space-y-1.5" aria-label="Transaction Meta Information">
-            <div className="flex justify-between"><span>Invoice Number:</span> <strong className="text-slate-800">{OUTFITTERS_RECEIPT_DATA.invoiceNo}</strong></div>
-            <div className="flex justify-between"><span>Date & Time:</span> <span>{OUTFITTERS_RECEIPT_DATA.date}</span></div>
-            <div className="flex justify-between"><span>NTN:</span> <span>{OUTFITTERS_RECEIPT_DATA.ntn}</span></div>
-            <div className="flex justify-between"><span>Cashier:</span> <span>{OUTFITTERS_RECEIPT_DATA.cashier}</span></div>
-          </section>
+    <main className="min-h-screen bg-[#f8fafc] text-slate-800 font-sans tracking-normal antialiased flex flex-col items-center justify-center py-8 px-4">
+
+      <article className="w-full max-w-md space-y-4">
+
+        {/* SECTION 1: Brand Header */}
+        <header className="bg-white rounded-xl p-8 border border-slate-200/60 text-center shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+          <h1 className="text-4xl font-light tracking-[0.4em] mr-[-0.4em] text-black uppercase transition-all select-none">
+            {LOGO_RECEIPT_DATA.brandName}
+          </h1>
+          <div className="w-8 h-[1px] bg-slate-200 mx-auto mt-5 mb-4"></div>
+          <p className="text-[10px] text-slate-400 font-medium tracking-widest uppercase">{LOGO_RECEIPT_DATA.taxFormation}</p>
         </header>
 
-        {/* 1. TOP CAROUSEL: New Arrivals Slider */}
-        <section 
-          aria-label="New Arrivals Campaigns" 
-          role="region" 
+        {/* SECTION 2: Transaction Metadata */}
+        <section className="bg-white rounded-xl p-5 border border-slate-200/60 space-y-2 text-xs text-slate-600" aria-label="Transaction Metadata">
+          <div className="flex justify-between border-b border-slate-50 pb-2">
+            <span className="text-slate-400 font-medium">Invoice Number</span>
+            <strong className="text-slate-900 font-mono tracking-tight font-semibold">{LOGO_RECEIPT_DATA.invoiceNo}</strong>
+          </div>
+          <div className="flex justify-between border-b border-slate-50 pb-2">
+            <span className="text-slate-400 font-medium">Date & Time</span>
+            <span className="text-slate-800 font-medium">{LOGO_RECEIPT_DATA.date}</span>
+          </div>
+          <div className="flex justify-between border-b border-slate-50 pb-2">
+            <span className="text-slate-400 font-medium">NTN Number</span>
+            <span className="text-slate-800 font-mono">{LOGO_RECEIPT_DATA.ntn}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-slate-400 font-medium">Cashier Personnel</span>
+            <span className="text-slate-900 font-semibold">{LOGO_RECEIPT_DATA.cashier}</span>
+          </div>
+        </section>
+
+        {/* SECTION 3: TOP IMAGE SLIDER - HEIGHT MAXED TO h-96 */}
+        <section
+          aria-label="New Arrivals Footwear Showreel"
+          role="region"
           aria-roledescription="carousel"
-          className="px-6 py-4 relative"
+          className="bg-white rounded-xl p-2 border border-slate-200/60 relative"
         >
-          <div className="rounded-xl overflow-hidden relative shadow-inner h-44 bg-slate-100" aria-live="polite">
-            {OUTFITTERS_RECEIPT_DATA.topBanners.map((slide: any, index: number) => (
+          <div className="rounded-lg overflow-hidden relative shadow-inner h-96 bg-slate-50" aria-live="polite">
+            {LOGO_RECEIPT_DATA.topBanners.map((slide: any, index: number) => (
               <div
                 key={index}
                 role="group"
                 aria-roledescription="slide"
-                className={`absolute inset-0 transition-opacity duration-500 ease-in-out ${
-                  index === topSlide ? "opacity-100 z-10" : "opacity-0 z-0"
-                }`}
+                className={`absolute inset-0 transition-opacity duration-500 ease-in-out ${index === topSlide ? "opacity-100 z-10" : "opacity-0 z-0"
+                  }`}
               >
-                <img 
-                  src={slide.img} 
-                  alt={slide.text} 
-                  className="w-full h-full object-cover"
+                <img
+                  src={slide.img}
+                  alt={slide.text}
+                  className="w-full h-full object-cover select-none"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent flex items-end p-4">
-                  <span className="text-white font-black text-xs tracking-wider uppercase">{slide.text}</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent flex items-end p-5">
+                  <span className="text-white font-medium text-xs tracking-widest uppercase leading-relaxed">{slide.text}</span>
                 </div>
               </div>
             ))}
 
             <button
               onClick={prevTopSlide}
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 bg-black/60 hover:bg-black text-white w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90 text-sm font-bold"
-              aria-label="Previous Top Slide"
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white text-slate-900 w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90 shadow-md"
+              aria-label="Previous Banner"
             >
               &#x276E;
             </button>
 
             <button
               onClick={nextTopSlide}
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 bg-black/60 hover:bg-black text-white w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90 text-sm font-bold"
-              aria-label="Next Top Slide"
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white text-slate-900 w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90 shadow-md"
+              aria-label="Next Banner"
             >
               &#x276F;
             </button>
           </div>
 
-          {/* Indicator Dots */}
-          <div className="flex justify-center space-x-2 mt-3">
-            {OUTFITTERS_RECEIPT_DATA.topBanners.map((_: any, index: number) => (
+          <div className="flex justify-center space-x-1 mt-2.5">
+            {LOGO_RECEIPT_DATA.topBanners.map((_: any, index: number) => (
               <button
                 key={index}
                 onClick={() => setTopSlide(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === topSlide ? "w-6 bg-slate-800" : "w-2 bg-slate-300"
-                }`}
-                aria-label={`Go to top slide ${index + 1}`}
+                className={`h-1 rounded-full transition-all duration-300 ${index === topSlide ? "w-4 bg-slate-900" : "w-1 bg-slate-200"
+                  }`}
+                aria-label={`Go to slide ${index + 1}`}
                 aria-current={index === topSlide ? "true" : "false"}
               />
             ))}
           </div>
         </section>
 
-        {/* Customer Service Rating Section */}
-        <section aria-label="Customer Satisfaction Feedback" className="px-6 py-4 border-y border-slate-100 bg-slate-50/50 text-center">
-          <h3 className="text-xs font-bold text-slate-600 uppercase tracking-wider">How was your service today?</h3>
-          <div className="flex justify-between mt-3 max-w-sm mx-auto">
+        {/* SECTION 4: Experience Rating Box */}
+        <section aria-label="Brand Survey" className="bg-white rounded-xl p-5 border border-slate-200/60 text-center">
+          <h3 className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-3.5">Store Feedback Survey</h3>
+          <div className="flex justify-between max-w-xs mx-auto">
             {[
-              { label: 'Worst', emoji: '😠' },
-              { label: 'Fine', emoji: '😐' },
+              { label: 'Poor', emoji: '😠' },
+              { label: 'Average', emoji: '😐' },
               { label: 'Good', emoji: '😊' },
-              { label: 'Best', emoji: '😍' }
+              { label: 'Excellent', emoji: '😍' }
             ].map((item) => (
-              <button 
+              <button
                 key={item.label}
                 onClick={() => setFeedback(item.label)}
-                className={`flex flex-col items-center p-2 rounded-lg transition-all ${
-                  feedback === item.label ? 'bg-slate-200 scale-105' : 'hover:bg-slate-100'
-                }`}
-                aria-label={`Rate service as ${item.label}`}
+                className={`flex flex-col items-center px-3 py-1.5 rounded-lg transition-all ${feedback === item.label ? 'bg-slate-50 border border-slate-200 scale-105' : 'hover:bg-slate-50/50'
+                  }`}
+                aria-label={`Rate as ${item.label}`}
               >
                 <span className="text-2xl" role="img" aria-hidden="true">{item.emoji}</span>
-                <span className="text-[10px] text-slate-500 font-bold mt-1">{item.label}</span>
+                <span className="text-[9px] text-slate-400 font-medium tracking-wider mt-1">{item.label}</span>
               </button>
             ))}
           </div>
         </section>
 
-        {/* Billed To Customer Details */}
-        <section aria-label="Billing Details" className="px-6 py-4 text-xs text-slate-600 space-y-1">
-          <div className="flex justify-between"><span>Billed To:</span> <span className="font-semibold text-slate-800">{OUTFITTERS_RECEIPT_DATA.billTo}</span></div>
-          <div className="flex justify-between"><span>STRN:</span> <span>{OUTFITTERS_RECEIPT_DATA.strn}</span></div>
+        {/* SECTION 5: Customer Billing Profile */}
+        <section aria-label="Customer Profiling" className="bg-white rounded-xl p-4 border border-slate-200/60 text-xs text-slate-600 space-y-1">
+          <div className="flex justify-between">
+            <span className="text-slate-400">Account Owner</span>
+            <span className="font-medium text-slate-800">{LOGO_RECEIPT_DATA.billTo}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-slate-400">STRN Registry</span>
+            <span className="font-mono text-slate-700">{LOGO_RECEIPT_DATA.strn}</span>
+          </div>
         </section>
 
-        {/* Purchased Items List */}
-        <section aria-label="Purchased Products" className="px-6 py-4 border-t border-slate-100">
+        {/* SECTION 6: Purchased Line Items */}
+        <section aria-label="Billed Items" className="bg-white rounded-xl p-5 border border-slate-200/60">
           <table className="w-full text-left border-collapse">
-            <caption className="sr-only">List of purchased items</caption>
             <thead>
-              <tr className="text-[10px] uppercase text-slate-400 tracking-wider border-b border-slate-100">
-                <th className="pb-2 font-bold">Item Description</th>
-                <th className="pb-2 text-right font-bold">Total Price</th>
+              <tr className="text-[9px] uppercase text-slate-400 tracking-widest border-b border-slate-100 pb-2">
+                <th className="pb-2 font-medium">Product Description</th>
+                <th className="pb-2 text-right font-medium">Amount</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
-              {OUTFITTERS_RECEIPT_DATA.items.map((item: any, idx: number) => (
+            <tbody className="divide-y divide-slate-50">
+              {LOGO_RECEIPT_DATA.items.map((item: any, idx: number) => (
                 <tr key={idx} className="text-xs">
-                  <td className="py-3 pr-2">
-                    <span className="font-bold text-slate-800 block">{item.name}</span>
-                    <span className="text-slate-500 text-[10px]">Qty: {item.qty} | GST: {item.gstPercent}%</span>
+                  <td className="py-3.5 pr-2">
+                    <span className="font-medium text-slate-900 block leading-tight">{item.name}</span>
+                    <span className="text-slate-400 text-[10px] mt-0.5 block">Qty: {item.qty} | Standard GST: {item.gstPercent}%</span>
                   </td>
-                  <td className="py-3 text-right font-bold text-slate-800">
-                    Rs. {(item.price * item.qty).toFixed(2)}
+                  <td className="py-3.5 text-right font-medium text-slate-900">
+                    Rs. {item.price.toLocaleString()}
                   </td>
                 </tr>
               ))}
@@ -212,115 +223,149 @@ export default function App() {
           </table>
         </section>
 
-        {/* Calculations and Breakdown */}
-        <section aria-label="Invoice Balance Summary" className="px-6 py-4 bg-slate-50 border-t border-slate-100 text-xs space-y-2">
-          <div className="flex justify-between text-slate-600"><span>Sub Total:</span> <span>Rs. {OUTFITTERS_RECEIPT_DATA.summary.total.toFixed(2)}</span></div>
-          {OUTFITTERS_RECEIPT_DATA.summary.discount > 0 && (
-            <div className="flex justify-between text-emerald-600 font-bold"><span>Discount Applied:</span> <span>-Rs. {OUTFITTERS_RECEIPT_DATA.summary.discount.toFixed(2)}</span></div>
+        {/* SECTION 7: Fiscal Ledger Breakdown */}
+        <section aria-label="Ledger Summary" className="bg-white rounded-xl p-5 border border-slate-200/60 text-xs space-y-2.5">
+          <div className="flex justify-between text-slate-500"><span>Gross Subtotal</span> <span className="text-slate-800">Rs. {LOGO_RECEIPT_DATA.summary.total.toLocaleString()}</span></div>
+          {LOGO_RECEIPT_DATA.summary.discount > 0 && (
+            <div className="flex justify-between text-emerald-600 font-medium bg-emerald-50/50 px-2 py-1.5 rounded-md border border-dashed border-emerald-200/40">
+              <span>Dynamic Loyalty Discount</span>
+              <span>-Rs. {LOGO_RECEIPT_DATA.summary.discount.toLocaleString()}</span>
+            </div>
           )}
-          <div className="flex justify-between text-slate-600"><span>Total GST Amount:</span> <span>Rs. {OUTFITTERS_RECEIPT_DATA.summary.gst.toFixed(2)}</span></div>
-          <div className="flex justify-between text-slate-600"><span>POS Service Fee:</span> <span>Rs. {OUTFITTERS_RECEIPT_DATA.summary.posFee.toFixed(2)}</span></div>
-          <div className="flex justify-between text-sm font-black text-slate-900 pt-3 border-t border-slate-200">
-            <span>TOTAL PAYABLE</span>
-            <span>Rs. {OUTFITTERS_RECEIPT_DATA.summary.payable.toFixed(2)}</span>
+          <div className="flex justify-between text-slate-500"><span>Net FBR GST Amount</span> <span className="text-slate-800">Rs. {LOGO_RECEIPT_DATA.summary.gst.toLocaleString()}</span></div>
+          <div className="flex justify-between text-slate-500"><span>POS Service Fee Charge</span> <span className="text-slate-800">Rs. {LOGO_RECEIPT_DATA.summary.posFee.toFixed(2)}</span></div>
+          <div className="flex justify-between text-sm font-semibold text-slate-900 pt-3.5 border-t border-slate-100">
+            <span className="tracking-wide">TOTAL NET PAYABLE</span>
+            <span className="text-black font-bold">Rs. {LOGO_RECEIPT_DATA.summary.payable.toLocaleString()}</span>
           </div>
         </section>
 
-        {/* Payment Instrument Details */}
-        <div className="px-6 py-3 flex justify-between items-center text-xs border-t border-slate-100">
-          <span className="text-slate-500">Method of Payment:</span>
-          <span className="font-bold text-slate-800 uppercase tracking-wider">{OUTFITTERS_RECEIPT_DATA.paymentMode}</span>
-        </div>
-
-        {/* 2. BOTTOM CAROUSEL: Special End Offers Slider */}
-        <section 
-          aria-label="Loyalty Discounts and Promos" 
-          role="region" 
-          aria-roledescription="carousel"
-          className="px-6 py-4 relative border-t border-slate-100"
+        {/* SECTION 8: Settlement Instrument Details */}
+        <section
+          aria-label="Payment Method Details"
+          className="bg-white rounded-xl p-5 border border-slate-200/60 flex justify-between items-center"
         >
-          <div className="rounded-xl overflow-hidden relative shadow-inner h-32 bg-slate-100" aria-live="polite">
-            {OUTFITTERS_RECEIPT_DATA.bottomBanners.map((slide: any, index: number) => (
+          {/* Left Side: Clean & Lightweight Label */}
+          <span className="text-slate-600 text-sm font-normal tracking-wide">
+            Payment Mode
+          </span>
+
+          {/* Right Side: Aesthetic Icon + Muted Value */}
+          <div className="flex items-center gap-3 text-slate-400" aria-hidden="true">
+            {/* Clean, Lightweight Inline SVG Card Icon */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth="1.2"
+              stroke="currentColor"
+              className="w-6 h-6 opacity-80"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z"
+              />
+            </svg>
+
+            {/* Value matching the exact smooth, lightweight color from your reference */}
+            <span className="text-sm font-normal text-slate-400">
+              {LOGO_RECEIPT_DATA.paymentMode}
+            </span>
+          </div>
+
+          {/* Screen Reader Accessible Text */}
+          <span className="sr-only">
+            Payment Mode is {LOGO_RECEIPT_DATA.paymentMode}
+          </span>
+        </section>
+
+        {/* SECTION 9: BOTTOM CAROUSEL - HEIGHT MAXED TO h-72 */}
+        <section
+          aria-label="Ongoing Promotional Campaign"
+          role="region"
+          aria-roledescription="carousel"
+          className="bg-white rounded-xl p-2 border border-slate-200/60 relative"
+        >
+          <div className="rounded-lg overflow-hidden relative shadow-inner h-72 bg-slate-50" aria-live="polite">
+            {LOGO_RECEIPT_DATA.bottomBanners.map((slide: any, index: number) => (
               <div
                 key={index}
                 role="group"
                 aria-roledescription="slide"
-                className={`absolute inset-0 transition-opacity duration-500 ease-in-out ${
-                  index === bottomSlide ? "opacity-100 z-10" : "opacity-0 z-0"
-                }`}
+                className={`absolute inset-0 transition-opacity duration-500 ease-in-out ${index === bottomSlide ? "opacity-100 z-10" : "opacity-0 z-0"
+                  }`}
               >
-                <img 
-                  src={slide.img} 
-                  alt={slide.text} 
-                  className="w-full h-full object-cover"
+                <img
+                  src={slide.img}
+                  alt={slide.text}
+                  className="w-full h-full object-cover select-none"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent flex items-end p-4">
-                  <span className="text-white font-black text-xs tracking-wider uppercase">{slide.text}</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent flex items-end p-5">
+                  <span className="text-white font-medium text-xs tracking-widest uppercase leading-relaxed">{slide.text}</span>
                 </div>
               </div>
             ))}
 
             <button
               onClick={prevBottomSlide}
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 bg-black/60 hover:bg-black text-white w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90 text-sm font-bold"
-              aria-label="Previous Bottom Slide"
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white text-slate-900 w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90 shadow-md"
+              aria-label="Previous Promo"
             >
               &#x276E;
             </button>
 
             <button
               onClick={nextBottomSlide}
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 bg-black/60 hover:bg-black text-white w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90 text-sm font-bold"
-              aria-label="Next Bottom Slide"
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white text-slate-900 w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90 shadow-md"
+              aria-label="Next Promo"
             >
               &#x276F;
             </button>
           </div>
 
-          {/* Indicator Dots */}
-          <div className="flex justify-center space-x-2 mt-3">
-            {OUTFITTERS_RECEIPT_DATA.bottomBanners.map((_: any, index: number) => (
+          <div className="flex justify-center space-x-1 mt-2.5">
+            {LOGO_RECEIPT_DATA.bottomBanners.map((_: any, index: number) => (
               <button
                 key={index}
                 onClick={() => setBottomSlide(index)}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === bottomSlide ? "w-6 bg-slate-800" : "w-2 bg-slate-300"
-                }`}
-                aria-label={`Go to bottom slide ${index + 1}`}
+                className={`h-1 rounded-full transition-all duration-300 ${index === bottomSlide ? "w-4 bg-slate-900" : "w-1 bg-slate-200"
+                  }`}
+                aria-label={`Go to promo slide ${index + 1}`}
                 aria-current={index === bottomSlide ? "true" : "false"}
               />
             ))}
           </div>
         </section>
 
-        {/* Barcode Mock Section */}
-        <section aria-label="Barcode Module" className="px-6 py-6 border-t border-slate-100">
-          <p className="text-[10px] text-slate-400 font-bold tracking-widest mb-1 text-center">RECEIPT IDENTIFIER</p>
-          <p className="text-[9px] font-mono break-all text-slate-500 mb-4 text-center">{OUTFITTERS_RECEIPT_DATA.receiptId}</p>
-          <div className="h-14 w-full bg-slate-900 flex items-stretch justify-between p-1.5 rounded" aria-hidden="true">
-            {[...Array(32)].map((_, i) => (
-              <div key={i} className={`bg-white ${i % 4 === 0 ? 'w-[1px]' : i % 3 === 0 ? 'w-[2.5px]' : 'w-[1.5px]'}`} />
+        {/* SECTION 10: Barcode Card */}
+        <section aria-label="Barcode Scanner Module" className="bg-white rounded-xl p-5 border border-slate-200/60 text-center">
+          <p className="text-[9px] text-slate-400 font-semibold tracking-widest mb-1">TRANSACTION TRACKING VERIFICATION</p>
+          <p className="text-[9px] font-mono break-all text-slate-400/80 mb-4">{LOGO_RECEIPT_DATA.receiptId}</p>
+          <div className="h-12 w-full bg-slate-950 flex items-stretch justify-between p-1.5 rounded" aria-hidden="true">
+            {[...Array(38)].map((_, i) => (
+              <div key={i} className={`bg-white ${i % 5 === 0 ? 'w-[1px]' : i % 3 === 0 ? 'w-[2.5px]' : 'w-[1.2px]'}`} />
             ))}
           </div>
-          <p className="text-sm font-bold tracking-widest mt-2 text-slate-800 text-center">{OUTFITTERS_RECEIPT_DATA.invoiceNo}</p>
+          <p className="text-xs font-semibold tracking-widest mt-2.5 text-slate-800 font-mono">{LOGO_RECEIPT_DATA.invoiceNo}</p>
         </section>
 
-        {/* Legal Terms and Branch Footnote */}
-        <footer className="p-6 bg-slate-50 border-t border-slate-100 text-center space-y-4">
+        {/* SECTION 11: Legal Terms Footer */}
+        <footer className="bg-white rounded-xl p-6 border border-slate-200/60 text-center space-y-4">
           <div className="text-xs text-slate-500">
-            <h4 className="font-bold text-slate-800 uppercase tracking-wide">{OUTFITTERS_RECEIPT_DATA.brandName} STORE</h4>
-            <p className="mt-1 leading-relaxed text-[11px]">{OUTFITTERS_RECEIPT_DATA.storeAddress}</p>
-            <p className="text-emerald-600 font-semibold mt-1 text-[11px]">{OUTFITTERS_RECEIPT_DATA.timings}</p>
+            <h4 className="font-semibold text-slate-900 tracking-widest text-[11px] uppercase">{LOGO_RECEIPT_DATA.brandName} OFFICIAL OUTLET</h4>
+            <p className="mt-1 leading-relaxed text-[11px] text-slate-400">{LOGO_RECEIPT_DATA.storeAddress}</p>
+            <p className="text-emerald-600 font-medium mt-1 text-[11px]">{LOGO_RECEIPT_DATA.timings}</p>
           </div>
 
-          <div className="text-[10px] text-slate-400 space-y-1 text-left border-t border-slate-200 pt-4">
-            <p className="font-bold text-slate-500 uppercase">Terms & Exchange Policy</p>
-            <p>1. Exchange possible within 14 days with unused tags.</p>
-            <p>2. No exchange/refund on sale items or inner wear.</p>
+          <div className="text-[10px] text-slate-400 space-y-1 text-left border-t border-slate-100 pt-3.5">
+            <p className="font-semibold text-slate-500 uppercase tracking-wider mb-1">Exchange Policy Details</p>
+            <p>1. Product can be claimed or exchanged within 14 days of acquisition with unhampered packaging.</p>
+            <p>2. Sales/Discounted campaigns are completely non-refundable and non-exchangeable.</p>
           </div>
 
-          <div className="text-[10px] text-slate-400 font-semibold pt-2">
-            Powered by SlipFree Pvt Ltd
+          <div className="text-[9px] text-slate-400/80 font-medium pt-2 border-t border-slate-100 tracking-wide">
+            Powered by SlipFree Systems
           </div>
         </footer>
 
