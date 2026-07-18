@@ -11,17 +11,7 @@ const LOGO_RECEIPT_DATA = {
   strn: "3277876231416",
   storeAddress: "24 km Ferozepur Road, Lahore, Pakistan",
   timings: "Open 11:00 AM - 11:00 PM",
-  
-  topBanners: [
-    {
-      img: "logo2.webp",
-      text: "NEW IN: PREMIUM SUMMER SANDLES & SNEAKERS"
-    },
-    {
-      img: "logo3.webp",
-      text: "HANDCRAFTED LUXURY LEATHER LOAFERS"
-    }
-  ],
+  storeNo: "004",
 
   bottomBanners: [
     {
@@ -49,17 +39,8 @@ const LOGO_RECEIPT_DATA = {
 };
 
 export default function App() {
-  const [topSlide, setTopSlide] = useState<number>(0);
   const [bottomSlide, setBottomSlide] = useState<number>(0);
   const [feedback, setFeedback] = useState<string | null>(null);
-
-  const nextTopSlide = () => {
-    setTopSlide((prev) => (prev + 1) % LOGO_RECEIPT_DATA.topBanners.length);
-  };
-
-  const prevTopSlide = () => {
-    setTopSlide((prev) => (prev - 1 + LOGO_RECEIPT_DATA.topBanners.length) % LOGO_RECEIPT_DATA.topBanners.length);
-  };
 
   const nextBottomSlide = () => {
     setBottomSlide((prev) => (prev + 1) % LOGO_RECEIPT_DATA.bottomBanners.length);
@@ -72,98 +53,71 @@ export default function App() {
   return (
     <main className="min-h-screen bg-[#e4ecf5] text-slate-700 font-sans tracking-normal antialiased flex flex-col items-center justify-center py-10 px-4">
       
+      {/* Absolute Injection Point for Poppins Standard Balanced Weights */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        
+        .balanced-brand-title {
+          font-family: 'Poppins', sans-serif !important;
+          font-weight: 300 !important; /* Balanced light weight - clean and professional */
+          letter-spacing: 0.55em !important;
+          margin-right: -0.55em !important;
+          text-transform: uppercase;
+          color: #000000;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+      `}</style>
+      
       <article className="w-full max-w-[440px] space-y-3.5">
         
-        {/* SECTION 1: Brand Header Card */}
-        <header className="bg-white rounded-[18px] p-8 border border-slate-200/50 text-center shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
-          <h1 className="text-4xl font-light tracking-[0.4em] mr-[-0.4em] text-black uppercase select-none">
-            {LOGO_RECEIPT_DATA.brandName}
+        {/* SECTION 1: Brand Header Card - Decreased top margin/padding */}
+        <header className="bg-white rounded-[18px] pt-5 pb-6 px-6 border border-slate-200/50 shadow-[0_1px_3px_rgba(0,0,0,0.01)] text-center">
+          
+          {/* Balanced Logo Title */}
+          <h1 className="text-[32px] balanced-brand-title select-none inline-block w-full">
+            LOGO
           </h1>
-          <div className="w-8 h-[1px] bg-slate-200 mx-auto mt-5 mb-4"></div>
-          <p className="text-[10px] text-slate-400 font-medium tracking-widest uppercase">{LOGO_RECEIPT_DATA.taxFormation}</p>
+          
+          {/* Tax Formation Details Line */}
+          <p 
+            className="text-[13px] text-black font-semibold mt-3" 
+            style={{ fontFamily: "'Poppins', sans-serif" }}
+          >
+            Tax Formation: <span className="text-[#0284c7] font-normal">{LOGO_RECEIPT_DATA.taxFormation}</span>
+          </p>
+          
+          {/* Structural Layout Separator Line */}
+          <div className="w-full h-[1px] bg-slate-100 my-4"></div>
+          
+          {/* Purchase Slip: Exact Layout Matching Image */}
+          <div 
+            className="text-[13px] text-slate-500 space-y-3 text-left"
+            style={{ fontFamily: "'Poppins', sans-serif" }}
+          >
+            <div className="flex justify-between items-center pb-2.5 border-b border-slate-100/70">
+              <span>Invoice Number</span>
+              <span className="text-slate-800 font-medium font-mono">{LOGO_RECEIPT_DATA.invoiceNo}</span>
+            </div>
+            
+            <div className="flex justify-between items-center pb-2.5 border-b border-slate-100/70">
+              <span>Date & Time</span>
+              <span className="text-slate-800 font-medium">{LOGO_RECEIPT_DATA.date}</span>
+            </div>
+            
+            <div className="flex justify-between items-center pb-2.5 border-b border-slate-100/70">
+              <span>NTN Number</span>
+              <span className="text-slate-800 font-medium font-mono">{LOGO_RECEIPT_DATA.ntn}</span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span>Cashier Personnel</span>
+              <span className="text-slate-800 font-medium">{LOGO_RECEIPT_DATA.cashier}</span>
+            </div>
+          </div>
         </header>
 
-        {/* SECTION 2: Transaction Metadata */}
-        <section className="bg-white rounded-[18px] p-6 border border-slate-200/50 space-y-2.5 text-[13px] text-slate-600" aria-label="Transaction Metadata">
-          <div className="flex justify-between border-b border-slate-100 pb-2.5">
-            <span className="text-slate-500 font-normal">Invoice Number</span> 
-            <strong className="text-slate-700 font-mono tracking-tight font-normal">{LOGO_RECEIPT_DATA.invoiceNo}</strong>
-          </div>
-          <div className="flex justify-between border-b border-slate-100 pb-2.5">
-            <span className="text-slate-500 font-normal">Date & Time</span> 
-            <span className="text-slate-500 font-normal">{LOGO_RECEIPT_DATA.date}</span>
-          </div>
-          <div className="flex justify-between border-b border-slate-100 pb-2.5">
-            <span className="text-slate-500 font-normal">NTN Number</span> 
-            <span className="text-slate-500 font-mono">{LOGO_RECEIPT_DATA.ntn}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-slate-500 font-normal">Cashier Personnel</span> 
-            <span className="text-slate-500 font-normal">{LOGO_RECEIPT_DATA.cashier}</span>
-          </div>
-        </section>
-
-        {/* SECTION 3: TOP IMAGE SLIDER - HEIGHT MAXED TO h-96 */}
-        <section 
-          aria-label="New Arrivals Footwear Showreel" 
-          role="region" 
-          aria-roledescription="carousel"
-          className="bg-white rounded-[18px] p-2 border border-slate-200/50 relative"
-        >
-          <div className="rounded-[12px] overflow-hidden relative h-96 bg-slate-50" aria-live="polite">
-            {LOGO_RECEIPT_DATA.topBanners.map((slide: any, index: number) => (
-              <div
-                key={index}
-                role="group"
-                aria-roledescription="slide"
-                className={`absolute inset-0 transition-opacity duration-500 ease-in-out ${
-                  index === topSlide ? "opacity-100 z-10" : "opacity-0 z-0"
-                }`}
-              >
-                <img 
-                  src={slide.img} 
-                  alt={slide.text} 
-                  className="w-full h-full object-cover select-none"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent flex items-end p-5">
-                  <span className="text-white font-medium text-xs tracking-widest uppercase leading-relaxed">{slide.text}</span>
-                </div>
-              </div>
-            ))}
-
-            <button
-              onClick={prevTopSlide}
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white text-slate-900 w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90 shadow-sm"
-              aria-label="Previous Banner"
-            >
-              &#x276E;
-            </button>
-
-            <button
-              onClick={nextTopSlide}
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white text-slate-900 w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90 shadow-sm"
-              aria-label="Next Banner"
-            >
-              &#x276F;
-            </button>
-          </div>
-
-          <div className="flex justify-center space-x-1 mt-2.5">
-            {LOGO_RECEIPT_DATA.topBanners.map((_: any, index: number) => (
-              <button
-                key={index}
-                onClick={() => setTopSlide(index)}
-                className={`h-1 rounded-full transition-all duration-300 ${
-                  index === topSlide ? "w-4 bg-slate-900" : "w-1 bg-slate-200"
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-                aria-current={index === topSlide ? "true" : "false"}
-              />
-            ))}
-          </div>
-        </section>
-
-        {/* SECTION 4: Experience Rating Box (Refactored to match exactly) */}
+        {/* SECTION 2: Experience Survey (Feedback) Block */}
         <section aria-label="Brand Survey" className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-center">
           <h3 className="text-base font-normal text-slate-800 mb-5">How was our service?</h3>
           <div className="flex justify-between max-w-sm mx-auto">
@@ -189,12 +143,8 @@ export default function App() {
           </div>
         </section>
 
-        {/* SECTION 5: Customer Billing Profile */}
+        {/* SECTION 4: Customer Account Profiles */}
         <section aria-label="Customer Profiling" className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-[13px] text-slate-500 space-y-2.5">
-          <div className="flex justify-between">
-            <span className="text-slate-500 font-normal">Cashier</span> 
-            <span className="font-normal text-slate-400">{LOGO_RECEIPT_DATA.cashier}</span>
-          </div>
           <div className="flex justify-between">
             <span className="text-slate-500 font-normal">Bill to</span> 
             <span className="font-normal text-slate-400">{LOGO_RECEIPT_DATA.billTo}</span>
@@ -205,7 +155,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* SECTION 6: Purchased Line Items */}
+        {/* SECTION 5: Stock Line Items */}
         <section aria-label="Billed Items" className="bg-white rounded-[18px] p-6 border border-slate-200/50">
           <div className="space-y-4">
             {LOGO_RECEIPT_DATA.items.map((item: any, idx: number) => (
@@ -229,7 +179,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* SECTION 7: Fiscal Ledger Breakdown */}
+        {/* SECTION 6: Fiscal Accumulation Ledger */}
         <section aria-label="Ledger Summary" className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-[13px] space-y-2.5 text-slate-500">
           <div className="flex justify-between">
             <span>Total</span> 
@@ -253,7 +203,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* SECTION 8: Settlement Instrument Details (Clean & Minimal SVG Icon) */}
+        {/* SECTION 7: Execution Instrument Details */}
         <section 
           aria-label="Payment Method Details" 
           className="bg-white rounded-[18px] p-6 border border-slate-200/50 flex justify-between items-center text-[13px]"
@@ -280,12 +230,9 @@ export default function App() {
               {LOGO_RECEIPT_DATA.paymentMode}
             </span>
           </div>
-          <span className="sr-only">
-            Payment Mode is {LOGO_RECEIPT_DATA.paymentMode}
-          </span>
         </section>
 
-        {/* SECTION 9: BOTTOM CAROUSEL - HEIGHT MAXED TO h-72 */}
+        {/* SECTION 8: BOTTOM MARKETING SLIDER */}
         <section 
           aria-label="Ongoing Promotional Campaign" 
           role="region" 
@@ -345,7 +292,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* SECTION 10: Barcode Card */}
+        {/* SECTION 9: Barcode Cryptographic Tracker */}
         <section aria-label="Barcode Scanner Module" className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-center">
           <p className="text-[9px] text-slate-400 font-semibold tracking-widest mb-1">TRANSACTION TRACKING VERIFICATION</p>
           <p className="text-[9px] font-mono break-all text-slate-400/80 mb-4">{LOGO_RECEIPT_DATA.receiptId}</p>
@@ -357,7 +304,7 @@ export default function App() {
           <p className="text-xs font-semibold tracking-widest mt-2.5 text-slate-800 font-mono">{LOGO_RECEIPT_DATA.invoiceNo}</p>
         </section>
 
-        {/* SECTION 11: Legal Terms Footer */}
+        {/* SECTION 10: Legal Entity Policy Footer */}
         <footer className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-center space-y-4">
           <div className="text-xs text-slate-500">
             <h4 className="font-semibold text-slate-900 tracking-widest text-[11px] uppercase">{LOGO_RECEIPT_DATA.brandName} OFFICIAL OUTLET</h4>
