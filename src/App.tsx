@@ -59,11 +59,11 @@ export default function App() {
         
         .balanced-brand-title {
           font-family: 'Poppins', sans-serif !important;
-          font-weight: 300 !important; /* Balanced light weight - clean and professional */
+          font-weight: 300 !important;
           letter-spacing: 0.55em !important;
           margin-right: -0.55em !important;
           text-transform: uppercase;
-          color: #000000;
+          color: #1e293b; /* Matches exact dark slate gray of invoice values */
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
@@ -71,20 +71,20 @@ export default function App() {
       
       <article className="w-full max-w-[440px] space-y-3.5">
         
-        {/* SECTION 1: Brand Header Card - Decreased top margin/padding */}
+        {/* SECTION 1: Brand Header Card */}
         <header className="bg-white rounded-[18px] pt-5 pb-6 px-6 border border-slate-200/50 shadow-[0_1px_3px_rgba(0,0,0,0.01)] text-center">
           
-          {/* Balanced Logo Title */}
+          {/* Balanced Slate-Gray Logo Title */}
           <h1 className="text-[32px] balanced-brand-title select-none inline-block w-full">
             LOGO
           </h1>
           
-          {/* Tax Formation Details Line */}
+          {/* Tax Formation Details Line - Unified with uniform text tone */}
           <p 
-            className="text-[13px] text-black font-semibold mt-3" 
+            className="text-[13px] text-slate-500 font-normal mt-3" 
             style={{ fontFamily: "'Poppins', sans-serif" }}
           >
-            Tax Formation: <span className="text-[#0284c7] font-normal">{LOGO_RECEIPT_DATA.taxFormation}</span>
+            Tax Formation: <span className="text-slate-800 font-medium">{LOGO_RECEIPT_DATA.taxFormation}</span>
           </p>
           
           {/* Structural Layout Separator Line */}
