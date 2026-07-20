@@ -74,14 +74,14 @@ export default function App() {
         {/* SECTION 1: Brand Header Card */}
         <header className="bg-white rounded-[18px] pt-5 pb-6 px-6 border border-slate-200/50 shadow-[0_1px_3px_rgba(0,0,0,0.01)] text-center">
           
-          {/* Balanced Slate-Gray Logo Title */}
-          <h1 className="text-[32px] balanced-brand-title select-none inline-block w-full">
+          {/* Scaled Up to text-[52px] for a bolder high-end retail identity asset presence */}
+          <h1 className="text-[52px] balanced-brand-title select-none inline-block w-full leading-none pt-3">
             LOGO
           </h1>
           
-          {/* Tax Formation Details Line - Unified with uniform text tone */}
+          {/* Tax Formation Details Line */}
           <p 
-            className="text-[13px] text-slate-500 font-normal mt-3" 
+            className="text-[13px] text-slate-500 font-normal mt-5" 
             style={{ fontFamily: "'Poppins', sans-serif" }}
           >
             Tax Formation: <span className="text-slate-800 font-medium">{LOGO_RECEIPT_DATA.taxFormation}</span>
@@ -90,7 +90,7 @@ export default function App() {
           {/* Structural Layout Separator Line */}
           <div className="w-full h-[1px] bg-slate-100 my-4"></div>
           
-          {/* Purchase Slip: Exact Layout Matching Image */}
+          {/* Purchase Slip */}
           <div 
             className="text-[13px] text-slate-500 space-y-3 text-left"
             style={{ fontFamily: "'Poppins', sans-serif" }}
