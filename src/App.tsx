@@ -52,7 +52,7 @@ const RATING_MAP: Record<string, string> = {
 };
 
 export default function App() {
-  const [receipt, setReceipt] = useState(null);
+  const [receipt, setReceipt] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [bottomSlide, setBottomSlide] = useState<number>(0);
