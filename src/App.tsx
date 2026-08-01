@@ -32,6 +32,7 @@ function mapReceiptData(invoice: any) {
       name: item.item_name,
       qty: item.quantity,
       price: parseFloat(item.unit_price),
+      total: parseFloat(item.total_price),
       gstPercent: parseFloat(item.gst_percent)
     })),
 
@@ -267,9 +268,9 @@ export default function App() {
                   </div>
                 </div>
                 <div className="text-right space-y-1 flex-shrink-0">
-                  <span className="font-normal text-slate-800 block">Total: Rs. {item.price.toLocaleString()}</span>
+                  <span className="font-normal text-slate-800 block">Total: Rs. {item.total.toLocaleString()}</span>
                   <div className="text-slate-400 text-xs font-normal space-y-0.5">
-                    <p>Price: Rs. {item.price.toLocaleString()}</p>
+                    <p>Unit Price: Rs. {item.price.toLocaleString()}</p>
                     <p>GST: Rs. {item.gstPercent}</p>
                   </div>
                 </div>
