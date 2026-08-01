@@ -5,20 +5,27 @@ import { useParams } from 'react-router-dom';
 function mapReceiptData(invoice: any) {
   return {
     brandName: "LOGO",
-    taxFormation: "RTO Lahore",
     invoiceNo: invoice.invoice_no,
-    date: new Date(invoice.created_at).toLocaleString(),
-    ntn: "NTN-4139821-4",
-    cashier: "ZAHID.MA",
+    fbrInvoiceNo: invoice.fbr_invoice_no,
+    date: new Date(invoice.created_at).toLocaleString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    }).replace(' at ', ', '),
+    shopName: invoice.shop_name || "LOGO",
+    shopAddress: invoice.shop_address || "Location details not available",
+    cashierName: invoice.cashier_name || "N/A",
     billTo: invoice.customer_name || "Valued Customer",
-    strn: "3277876231416",
-    storeAddress: "24 km Ferozepur Road, Lahore, Pakistan",
+    customerPhone: invoice.customer_phone || null,
     timings: "Open 11:00 AM - 11:00 PM",
     storeNo: String(invoice.store_id),
 
     bottomBanners: [
-      { img: `${import.meta.env.BASE_URL}men.webp`, text: "DOT SALE: BUY 1 GET 1 FREE ENDS SOON" },
-      { img: `${import.meta.env.BASE_URL}banner.webp`, text: "EXCLUSIVE WESTFORD WALLET SERIES" }
+      { img: `${import.meta.env.BASE_URL}men.webp` },
+      { img: `${import.meta.env.BASE_URL}banner.webp` }
     ],
 
     items: invoice.items.map((item: any) => ({
@@ -175,12 +182,11 @@ export default function App() {
           </h1>
 
           {/* Tax Formation Details Line */}
-          <p
-            className="text-[13px] text-slate-500 font-normal mt-5"
-            style={{ fontFamily: "'Poppins', sans-serif" }}
-          >
-            Tax Formation: <span className="text-slate-800 font-medium">{data.taxFormation}</span>
-          </p>
+          {/* Shop Name + Address */}
+          <div className="mt-5" style={{ fontFamily: "'Poppins', sans-serif" }}>
+            <p className="text-[14px] text-slate-800 font-semibold">{data.shopName}</p>
+            <p className="text-[11px] text-slate-400 mt-1">{data.shopAddress}</p>
+          </div>
 
           {/* Structural Layout Separator Line */}
           <div className="w-full h-[1px] bg-slate-100 my-4"></div>
@@ -200,14 +206,9 @@ export default function App() {
               <span className="text-slate-800 font-medium">{data.date}</span>
             </div>
 
-            <div className="flex justify-between items-center pb-2.5 border-b border-slate-100/70">
-              <span>NTN Number</span>
-              <span className="text-slate-800 font-medium font-mono">{data.ntn}</span>
-            </div>
-
             <div className="flex justify-between items-center">
               <span>Cashier Personnel</span>
-              <span className="text-slate-800 font-medium">{data.cashier}</span>
+              <span className="text-slate-800 font-medium">{data.cashierName}</span>
             </div>
           </div>
         </header>
@@ -238,16 +239,19 @@ export default function App() {
           </div>
         </section>
 
+
         {/* SECTION 4: Customer Account Profiles */}
         <section aria-label="Customer Profiling" className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-[13px] text-slate-500 space-y-2.5">
           <div className="flex justify-between">
             <span className="text-slate-500 font-normal">Bill to</span>
             <span className="font-normal text-slate-400">{data.billTo}</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-slate-500 font-normal">STRN:</span>
-            <span className="font-mono text-slate-400">{data.strn}</span>
-          </div>
+          {data.customerPhone && (
+            <div className="flex justify-between">
+              <span className="text-slate-500 font-normal">Phone</span>
+              <span className="font-mono text-slate-400">{data.customerPhone}</span>
+            </div>
+          )}
         </section>
 
         {/* SECTION 5: Stock Line Items */}
@@ -259,14 +263,14 @@ export default function App() {
                   <span className="font-normal text-slate-800 block leading-tight">{item.name}</span>
                   <div className="text-slate-400 text-xs font-normal space-y-0.5">
                     <p>Quantity: {item.qty}</p>
-                    <p>GST%: {item.gstPercent}</p>
+                    <p>TAX: {item.gstPercent}</p>
                   </div>
                 </div>
                 <div className="text-right space-y-1 flex-shrink-0">
                   <span className="font-normal text-slate-800 block">Total: Rs. {item.price.toLocaleString()}</span>
                   <div className="text-slate-400 text-xs font-normal space-y-0.5">
                     <p>Price: Rs. {item.price.toLocaleString()}</p>
-                    <p>GST: Rs. {((item.price * item.gstPercent) / 100).toFixed(2)}</p>
+                    <p>GST: Rs. {item.gstPercent}</p>
                   </div>
                 </div>
               </div>
@@ -394,21 +398,30 @@ export default function App() {
               <div key={i} className={`bg-white ${i % 5 === 0 ? 'w-[1px]' : i % 3 === 0 ? 'w-[2.5px]' : 'w-[1.2px]'}`} />
             ))}
           </div>
-          <p className="text-xs font-semibold tracking-widest mt-2.5 text-slate-800 font-mono">{data.invoiceNo}</p>
+          <p className="text-xs font-semibold tracking-widest mt-2.5 text-slate-800 font-mono">{data.fbrInvoiceNo}</p>
         </section>
 
         {/* SECTION 10: Legal Entity Policy Footer */}
         <footer className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-center space-y-4">
           <div className="text-xs text-slate-500">
             <h4 className="font-semibold text-slate-900 tracking-widest text-[11px] uppercase">{data.brandName} OFFICIAL OUTLET</h4>
-            <p className="mt-1 leading-relaxed text-[11px] text-slate-400">{data.storeAddress}</p>
+            <p className="mt-1 leading-relaxed text-[11px] text-slate-400">{data.shopAddress}</p>
             <p className="text-emerald-600 font-medium mt-1 text-[11px]">{data.timings}</p>
           </div>
 
           <div className="text-[10px] text-slate-400 space-y-1 text-left border-t border-slate-100 pt-3.5">
-            <p className="font-semibold text-slate-500 uppercase tracking-wider mb-1">Exchange Policy Details</p>
-            <p>1. Product can be claimed or exchanged within 14 days of acquisition with unhampered packaging.</p>
-            <p>2. Sales/Discounted campaigns are completely non-refundable and non-exchangeable.</p>
+            <p className="font-semibold text-slate-500 uppercase tracking-wider mb-1">Terms &amp; Conditions</p>
+            <ul className="space-y-1 list-none">
+              <li>• Refunds can be done within 4 days of purchase date along with sale receipt.</li>
+              <li>• Used products are not exchangeable / refundable.</li>
+              <li>• All refunds / claims will be given on current price.</li>
+              <li>• Exchanges can be done within 15 days of purchase date.</li>
+              <li>• Repairing will be charged after 1 month of purchase (if product is repairable).</li>
+              <li>• Company decision regarding product claim would be final and cannot be challenged in court.</li>
+              <li>• Sale items are not exchangeable / claimable / refundable.</li>
+              <li>• Claims / complaints can be proceeded only in Faisalabad court.</li>
+              <li>• Any purchase in Pakistan can be exchangeable / refundable in UAE on current price with local currency, subject to availability of product.</li>
+            </ul>
           </div>
 
           <div className="text-[9px] text-slate-400/80 font-medium pt-2 border-t border-slate-100 tracking-wide">
