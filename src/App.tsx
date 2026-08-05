@@ -264,7 +264,7 @@ export default function App() {
                   <span className="font-normal text-slate-800 block leading-tight">{item.name}</span>
                   <div className="text-slate-400 text-xs font-normal space-y-0.5">
                     <p>Quantity: {item.qty}</p>
-                    <p>TAX: {item.gstPercent}</p>
+                    <p>GST: {item.gstPercent}</p>
                   </div>
                 </div>
                 <div className="text-right space-y-1 flex-shrink-0">
@@ -392,7 +392,7 @@ export default function App() {
 
         {/* SECTION 9: Barcode Cryptographic Tracker */}
         <section aria-label="Barcode Scanner Module" className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-center">
-          <p className="text-[9px] text-slate-400 font-semibold tracking-widest mb-1">TRANSACTION TRACKING VERIFICATION</p>
+          <p className="text-[9px] text-slate-400 font-semibold tracking-widest mb-1">FBR Information.</p>
           <p className="text-[9px] font-mono break-all text-slate-400/80 mb-4">{data.receiptId}</p>
           <div className="h-12 w-full bg-slate-950 flex items-stretch justify-between p-1.5 rounded" aria-hidden="true">
             {[...Array(38)].map((_, i) => (
