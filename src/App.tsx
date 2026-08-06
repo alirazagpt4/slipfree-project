@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
-// map data function
 function mapReceiptData(invoice: any) {
   return {
     brandName: "LOGO",
@@ -37,6 +36,7 @@ function mapReceiptData(invoice: any) {
     })),
 
     summary: {
+      price_excl_tax: parseFloat(invoice.price_excl_tax),
       total: parseFloat(invoice.total_amount),
       discount: parseFloat(invoice.discount),
       gst: parseFloat(invoice.gst_amount),
@@ -49,8 +49,6 @@ function mapReceiptData(invoice: any) {
   };
 }
 
-
-// ratings 
 const RATING_MAP: Record<string, string> = {
   'Worst': 'worst',
   'Not Good': 'not_good',
@@ -65,9 +63,24 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [bottomSlide, setBottomSlide] = useState<number>(0);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [feedbackSubmitted, setFeedbackSubmitted] = useState(!!receipt?.feedback);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+
+  // Splash Toast state + Dynamic message handling
+  const [toast, setToast] = useState<{ show: boolean; text: string; error?: boolean }>({
+    show: false,
+    text: '',
+    error: false
+  });
+
   const { hash } = useParams();
 
+  // Helper trigger function for 1-second auto-dismiss splash toast
+  const triggerToast = (text: string, isError: boolean = false) => {
+    setToast({ show: true, text, error: isError });
+    setTimeout(() => {
+      setToast({ show: false, text: '', error: false });
+    }, 1000);
+  };
 
   useEffect(() => {
     async function loadReceipt() {
@@ -80,6 +93,11 @@ export default function App() {
 
         const data = await response.json();
         setReceipt(data.invoice);
+
+        if (data.invoice?.feedback) {
+          setFeedbackSubmitted(true);
+          setFeedback(data.invoice.feedback);
+        }
       } catch (err) {
         setError('Could not load receipt');
       } finally {
@@ -90,33 +108,19 @@ export default function App() {
     loadReceipt();
   }, [hash]);
 
-
-
-  // Debug ke liye temporary — turant dekh lein data aa raha hai ya nahi
-  console.log('Fetched receipt:', receipt);
-
-
-  // Loading state — jab tak data nahi aaya
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
 
-
-  // Error state
   if (error) {
     return <div className="min-h-screen flex items-center justify-center">{error}</div>;
   }
 
-
-  // Agar receipt nahi mila
   if (!receipt) {
     return <div className="min-h-screen flex items-center justify-center">Receipt not found</div>;
   }
 
-
-  // Data ko map karo
   const data = mapReceiptData(receipt);
-
 
   const nextBottomSlide = () => {
     setBottomSlide((prev) => (prev + 1) % data.bottomBanners.length);
@@ -126,10 +130,12 @@ export default function App() {
     setBottomSlide((prev) => (prev - 1 + data.bottomBanners.length) % data.bottomBanners.length);
   };
 
-
-  // feedback code 
   async function handleFeedback(label: string) {
-    if (feedbackSubmitted) return; // already submit ho chuki, dobara mat karo
+    // Agar already submit ho chuki hai, alert crash k bina splash message show hoga 1 sec tak
+    if (feedbackSubmitted) {
+      triggerToast('Feedback already submitted!');
+      return;
+    }
 
     setFeedback(label);
 
@@ -147,16 +153,27 @@ export default function App() {
       }
 
       setFeedbackSubmitted(true);
-      alert('Thank you for your feedback!');
+      triggerToast('Thank you for your feedback!');
     } catch (err: any) {
-      alert(err.message);
+      triggerToast(err.message || 'Error submitting feedback', true);
     }
   }
 
   return (
-    <main className="min-h-screen bg-[#e4ecf5] text-slate-700 font-sans tracking-normal antialiased flex flex-col items-center justify-center py-10 px-4">
+    <main className="min-h-screen bg-[#e4ecf5] text-slate-700 font-sans tracking-normal antialiased flex flex-col items-center justify-center py-10 px-4 relative">
 
-      {/* Absolute Injection Point for Poppins Standard Balanced Weights */}
+      {/* Floating Dynamic Splash Toast (Alert ki jagah 1 second splash) */}
+      {toast.show && (
+        <div
+          role="status"
+          aria-live="polite"
+          className={`fixed top-6 z-50 text-white font-medium text-sm px-6 py-3 rounded-full shadow-lg transition-all duration-300 animate-bounce ${toast.error ? 'bg-rose-600' : 'bg-emerald-600'
+            }`}
+        >
+          {toast.text}
+        </div>
+      )}
+
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
         
@@ -166,7 +183,7 @@ export default function App() {
           letter-spacing: 0.55em !important;
           margin-right: -0.55em !important;
           text-transform: uppercase;
-          color: #1e293b; /* Matches exact dark slate gray of invoice values */
+          color: #1e293b;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
@@ -176,23 +193,16 @@ export default function App() {
 
         {/* SECTION 1: Brand Header Card */}
         <header className="bg-white rounded-[18px] pt-5 pb-6 px-6 border border-slate-200/50 shadow-[0_1px_3px_rgba(0,0,0,0.01)] text-center">
-
-          {/* Scaled Up to text-[52px] for a bolder high-end retail identity asset presence */}
           <h1 className="text-[52px] balanced-brand-title select-none inline-block w-full leading-none pt-3">
             LOGO
           </h1>
 
-          {/* Tax Formation Details Line */}
-          {/* Shop Name + Address */}
           <div className="mt-5" style={{ fontFamily: "'Poppins', sans-serif" }}>
             <p className="text-[14px] text-slate-800 font-semibold">{data.shopName}</p>
-            <p className="text-[11px] text-slate-400 mt-1">{data.shopAddress}</p>
           </div>
 
-          {/* Structural Layout Separator Line */}
           <div className="w-full h-[1px] bg-slate-100 my-4"></div>
 
-          {/* Purchase Slip */}
           <div
             className="text-[13px] text-slate-500 space-y-3 text-left"
             style={{ fontFamily: "'Poppins', sans-serif" }}
@@ -203,7 +213,7 @@ export default function App() {
             </div>
 
             <div className="flex justify-between items-center pb-2.5 border-b border-slate-100/70">
-              <span>Date & Time</span>
+              <span>Date &amp; Time</span>
               <span className="text-slate-800 font-medium">{data.date}</span>
             </div>
 
@@ -228,9 +238,8 @@ export default function App() {
               <button
                 key={item.label}
                 onClick={() => handleFeedback(item.label)}
-                disabled={feedbackSubmitted}
                 className={`flex flex-col items-center px-2 py-1 rounded-lg transition-all ${feedback === item.label ? 'bg-slate-50 scale-105' : 'hover:bg-slate-50/50'
-                  } ${feedbackSubmitted ? 'opacity-40 cursor-not-allowed' : ''}`}
+                  } ${feedbackSubmitted ? 'opacity-50 cursor-pointer' : ''}`}
                 aria-label={`Rate as ${item.label}`}
               >
                 <span className="text-3xl opacity-85" role="img" aria-hidden="true">{item.emoji}</span>
@@ -239,7 +248,6 @@ export default function App() {
             ))}
           </div>
         </section>
-
 
         {/* SECTION 4: Customer Account Profiles */}
         <section aria-label="Customer Profiling" className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-[13px] text-slate-500 space-y-2.5">
@@ -264,7 +272,6 @@ export default function App() {
                   <span className="font-normal text-slate-800 block leading-tight">{item.name}</span>
                   <div className="text-slate-400 text-xs font-normal space-y-0.5">
                     <p>Quantity: {item.qty}</p>
-                    <p>GST: {item.gstPercent}</p>
                   </div>
                 </div>
                 <div className="text-right space-y-1 flex-shrink-0">
@@ -282,6 +289,10 @@ export default function App() {
         {/* SECTION 6: Fiscal Accumulation Ledger */}
         <section aria-label="Ledger Summary" className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-[13px] space-y-2.5 text-slate-500">
           <div className="flex justify-between">
+            <span> Excluded. Tax</span>
+            <span className="text-slate-400">Rs. {data.summary.price_excl_tax.toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between">
             <span>Total</span>
             <span className="text-slate-400">Rs. {data.summary.total.toLocaleString()}</span>
           </div>
@@ -298,7 +309,7 @@ export default function App() {
             <span className="text-slate-400">Rs. {data.summary.posFee}</span>
           </div>
           <div className="flex justify-between text-lg font-normal text-slate-800 pt-2">
-            <span className="font-semibold tracking-wide">Payable</span>
+            <span className="font-semibold tracking-wide">Paid</span>
             <span className="text-black font-semibold">Rs. {data.summary.payable.toLocaleString()}</span>
           </div>
         </section>
@@ -404,10 +415,16 @@ export default function App() {
 
         {/* SECTION 10: Legal Entity Policy Footer */}
         <footer className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-center space-y-4">
-          <div className="text-xs text-slate-500">
-            <h4 className="font-semibold text-slate-900 tracking-widest text-[11px] uppercase">{data.brandName} OFFICIAL OUTLET</h4>
-            <p className="mt-1 leading-relaxed text-[11px] text-slate-400">{data.shopAddress}</p>
-            <p className="text-emerald-600 font-medium mt-1 text-[11px]">{data.timings}</p>
+          <div className="text-xs space-y-1">
+            <h4 className="font-semibold text-emerald-600 tracking-wider text-[13px] uppercase">
+              Let's Go Green
+            </h4>
+            <p className="text-[11px] text-slate-500 font-medium">
+              Paperless environment
+            </p>
+            <p className="text-[11px] text-slate-400">
+              Contributing to healthy society
+            </p>
           </div>
 
           <div className="text-[10px] text-slate-400 space-y-1 text-left border-t border-slate-100 pt-3.5">
@@ -420,15 +437,13 @@ export default function App() {
               <li>• Repairing will be charged after 1 month of purchase (if product is repairable).</li>
               <li>• Company decision regarding product claim would be final and cannot be challenged in court.</li>
               <li>• Sale items are not exchangeable / claimable / refundable.</li>
-              <li>• Claims / complaints can be proceeded only in Faisalabad court.</li>
-              <li>• Any purchase in Pakistan can be exchangeable / refundable in UAE on current price with local currency, subject to availability of product.</li>
+              <li>• Exchanges can be done within 15 days of purchase date.</li>
             </ul>
           </div>
 
           <div className="text-[9px] text-slate-400/80 font-medium pt-2 border-t border-slate-100 tracking-wide">
             Powered by SlipFree Systems
           </div>
-          {/* <p>DEBUG: {hash}</p> */}
         </footer>
 
       </article>
