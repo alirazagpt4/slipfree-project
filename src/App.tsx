@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { FbrBarcodeModule } from './components/FbrCodeSection';
+
 function mapReceiptData(invoice: any) {
   return {
     brandName: "LOGO",
@@ -238,12 +240,27 @@ export default function App() {
               <button
                 key={item.label}
                 onClick={() => handleFeedback(item.label)}
-                className={`flex flex-col items-center px-2 py-1 rounded-lg transition-all ${feedback === item.label ? 'bg-slate-50 scale-105' : 'hover:bg-slate-50/50'
-                  } ${feedbackSubmitted ? 'opacity-50 cursor-pointer' : ''}`}
+                className={`flex flex-col items-center px-2 py-1 rounded-lg transition-all ${
+                  // Selected button ke liye background
+                  feedback === item.label ? 'bg-slate-100 scale-105' : 'hover:bg-slate-50/50'
+                  }`}
                 aria-label={`Rate as ${item.label}`}
               >
-                <span className="text-3xl opacity-85" role="img" aria-hidden="true">{item.emoji}</span>
-                <span className="text-[11px] text-slate-400 font-normal mt-1.5">{item.label}</span>
+                {/* Step 2 mein Emoji ka span yahan update hoga */}
+                <span className={`text-3xl transition-opacity duration-200 ${
+                  // Jab tak feedback na diya ho, sab normal (opacity-90). 
+                  // Feedback dene ke baad Selected emoji bright (opacity-100) aur baaki sab dull (opacity-30).
+                  feedback
+                    ? (feedback === item.label ? 'opacity-100 scale-110' : 'opacity-30 grayscale-[50%]')
+                    : 'opacity-90'
+                  }`} role="img" aria-hidden="true">
+                  {item.emoji}
+                </span>
+
+                <span className={`text-[11px] font-normal mt-1.5 transition-colors ${feedback === item.label ? 'text-slate-800 font-semibold' : 'text-slate-400'
+                  }`}>
+                  {item.label}
+                </span>
               </button>
             ))}
           </div>
@@ -402,16 +419,18 @@ export default function App() {
         </section>
 
         {/* SECTION 9: Barcode Cryptographic Tracker */}
-        <section aria-label="Barcode Scanner Module" className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-center">
+        {/* <section aria-label="Barcode Scanner Module" className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-center">
           <p className="text-[9px] text-slate-400 font-semibold tracking-widest mb-1">FBR Information.</p>
-          <p className="text-[9px] font-mono break-all text-slate-400/80 mb-4">{data.receiptId}</p>
           <div className="h-12 w-full bg-slate-950 flex items-stretch justify-between p-1.5 rounded" aria-hidden="true">
             {[...Array(38)].map((_, i) => (
               <div key={i} className={`bg-white ${i % 5 === 0 ? 'w-[1px]' : i % 3 === 0 ? 'w-[2.5px]' : 'w-[1.2px]'}`} />
             ))}
           </div>
           <p className="text-xs font-semibold tracking-widest mt-2.5 text-slate-800 font-mono">{data.fbrInvoiceNo}</p>
-        </section>
+        </section> */}
+
+        {/* section 9 */}
+        <FbrBarcodeModule data={data} />
 
         {/* SECTION 10: Legal Entity Policy Footer */}
         <footer className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-center space-y-4">
