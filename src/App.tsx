@@ -32,18 +32,18 @@ function mapReceiptData(invoice: any) {
     items: invoice.items.map((item: any) => ({
       name: item.item_name,
       qty: item.quantity,
-      price: parseFloat(item.unit_price),
-      total: parseFloat(item.total_price),
-      gstPercent: parseFloat(item.gst_percent)
+      price: parseFloat(item.unit_price) || 0,
+      total: parseFloat(item.total_price) || 0,
+      gstPercent: parseFloat(item.gst_percent) || 0
     })),
 
     summary: {
-      price_excl_tax: parseFloat(invoice.price_excl_tax),
-      total: parseFloat(invoice.total_amount),
-      discount: parseFloat(invoice.discount),
-      gst: parseFloat(invoice.gst_amount),
-      posFee: parseFloat(invoice.pos_fee),
-      payable: parseFloat(invoice.payable_amount)
+      price_excl_tax: parseFloat(invoice.price_excl_tax) || 0,
+      total: parseFloat(invoice.total_amount) || 0,
+      discount: parseFloat(invoice.discount) || 0,
+      gst: parseFloat(invoice.gst_amount) || 0,
+      posFee: parseFloat(invoice.pos_fee) || 0,
+      payable: parseFloat(invoice.payable_amount) || 0
     },
 
     paymentMode: invoice.payment_mode,
@@ -59,6 +59,11 @@ const RATING_MAP: Record<string, string> = {
   'Best': 'best'
 };
 
+// Helper for strict Comma Separation across numbers
+const formatMoney = (val: number) => {
+  return (val || 0).toLocaleString('en-US');
+};
+
 export default function App() {
   const [receipt, setReceipt] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -67,7 +72,6 @@ export default function App() {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
-  // Splash Toast state + Dynamic message handling
   const [toast, setToast] = useState<{ show: boolean; text: string; error?: boolean }>({
     show: false,
     text: '',
@@ -76,7 +80,6 @@ export default function App() {
 
   const { hash } = useParams();
 
-  // Helper trigger function for 1-second auto-dismiss splash toast
   const triggerToast = (text: string, isError: boolean = false) => {
     setToast({ show: true, text, error: isError });
     setTimeout(() => {
@@ -133,7 +136,6 @@ export default function App() {
   };
 
   async function handleFeedback(label: string) {
-    // Agar already submit ho chuki hai, alert crash k bina splash message show hoga 1 sec tak
     if (feedbackSubmitted) {
       triggerToast('Feedback already submitted!');
       return;
@@ -164,7 +166,6 @@ export default function App() {
   return (
     <main className="min-h-screen bg-[#e4ecf5] text-slate-700 font-sans tracking-normal antialiased flex flex-col items-center justify-center py-10 px-4 relative">
 
-      {/* Floating Dynamic Splash Toast (Alert ki jagah 1 second splash) */}
       {toast.show && (
         <div
           role="status"
@@ -240,25 +241,25 @@ export default function App() {
               <button
                 key={item.label}
                 onClick={() => handleFeedback(item.label)}
-                className={`flex flex-col items-center px-2 py-1 rounded-lg transition-all ${
-                  // Selected button ke liye background
-                  feedback === item.label ? 'bg-slate-100 scale-105' : 'hover:bg-slate-50/50'
+                className={`flex flex-col items-center px-2 py-1 rounded-lg transition-all ${feedback === item.label ? 'bg-slate-100 scale-105' : 'hover:bg-slate-50/50'
                   }`}
                 aria-label={`Rate as ${item.label}`}
               >
-                {/* Step 2 mein Emoji ka span yahan update hoga */}
-                <span className={`text-3xl transition-opacity duration-200 ${
-                  // Jab tak feedback na diya ho, sab normal (opacity-90). 
-                  // Feedback dene ke baad Selected emoji bright (opacity-100) aur baaki sab dull (opacity-30).
-                  feedback
-                    ? (feedback === item.label ? 'opacity-100 scale-110' : 'opacity-30 grayscale-[50%]')
-                    : 'opacity-90'
-                  }`} role="img" aria-hidden="true">
+                <span
+                  className={`text-3xl transition-all duration-200 ${feedback
+                      ? (feedback === item.label ? 'opacity-100 scale-110 grayscale-0' : 'opacity-20 grayscale')
+                      : 'opacity-90 hover:opacity-100'
+                    }`}
+                  role="img"
+                  aria-hidden="true"
+                >
                   {item.emoji}
                 </span>
 
-                <span className={`text-[11px] font-normal mt-1.5 transition-colors ${feedback === item.label ? 'text-slate-800 font-semibold' : 'text-slate-400'
-                  }`}>
+                <span
+                  className={`text-[11px] font-normal mt-1.5 transition-colors ${feedback === item.label ? 'text-slate-800 font-semibold' : 'text-slate-400'
+                    }`}
+                >
                   {item.label}
                 </span>
               </button>
@@ -266,7 +267,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* SECTION 4: Customer Account Profiles */}
+        {/* SECTION 3: Customer Account Profiles */}
         <section aria-label="Customer Profiling" className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-[13px] text-slate-500 space-y-2.5">
           <div className="flex justify-between">
             <span className="text-slate-500 font-normal">Bill to</span>
@@ -280,7 +281,7 @@ export default function App() {
           )}
         </section>
 
-        {/* SECTION 5: Stock Line Items */}
+        {/* SECTION 4: Stock Line Items (GST Line Item Removed) */}
         <section aria-label="Billed Items" className="bg-white rounded-[18px] p-6 border border-slate-200/50">
           <div className="space-y-4">
             {data.items.map((item: any, idx: number) => (
@@ -292,10 +293,9 @@ export default function App() {
                   </div>
                 </div>
                 <div className="text-right space-y-1 flex-shrink-0">
-                  <span className="font-normal text-slate-800 block">Total: Rs. {item.total.toLocaleString()}</span>
+                  <span className="font-normal text-slate-800 block">Total: Rs. {formatMoney(item.total)}</span>
                   <div className="text-slate-400 text-xs font-normal space-y-0.5">
-                    <p>Unit Price: Rs. {item.price.toLocaleString()}</p>
-                    <p>GST: Rs. {item.gstPercent}</p>
+                    <p>Unit Price: Rs. {formatMoney(item.price)}</p>
                   </div>
                 </div>
               </div>
@@ -303,35 +303,35 @@ export default function App() {
           </div>
         </section>
 
-        {/* SECTION 6: Fiscal Accumulation Ledger */}
+        {/* SECTION 5: Fiscal Accumulation Ledger (Reordered & Formatted) */}
         <section aria-label="Ledger Summary" className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-[13px] space-y-2.5 text-slate-500">
           <div className="flex justify-between">
-            <span> Excluded. Tax</span>
-            <span className="text-slate-400">Rs. {data.summary.price_excl_tax.toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Total</span>
-            <span className="text-slate-400">Rs. {data.summary.total.toLocaleString()}</span>
-          </div>
-          <div className="flex justify-between">
-            <span>Discount (If any)</span>
-            <span className="text-slate-400">{data.summary.discount}</span>
+            <span>Excluded Tax</span>
+            <span className="text-slate-400">Rs. {formatMoney(data.summary.price_excl_tax)}</span>
           </div>
           <div className="flex justify-between">
             <span>Total GST</span>
-            <span className="text-slate-400">Rs. {data.summary.gst.toLocaleString()}</span>
+            <span className="text-slate-400">Rs. {formatMoney(data.summary.gst)}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>POS Fee</span>
+            <span className="text-slate-400">Rs. {formatMoney(data.summary.posFee)}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Discount</span>
+            <span className="text-slate-400">Rs. {formatMoney(data.summary.discount)}</span>
           </div>
           <div className="flex justify-between pb-3.5 border-b border-slate-100">
-            <span>POS Service Fee</span>
-            <span className="text-slate-400">Rs. {data.summary.posFee}</span>
+            <span>Total</span>
+            <span className="text-slate-400">Rs. {formatMoney(data.summary.total)}</span>
           </div>
           <div className="flex justify-between text-lg font-normal text-slate-800 pt-2">
             <span className="font-semibold tracking-wide">Paid</span>
-            <span className="text-black font-semibold">Rs. {data.summary.payable.toLocaleString()}</span>
+            <span className="text-black font-semibold">Rs. {formatMoney(data.summary.payable)}</span>
           </div>
         </section>
 
-        {/* SECTION 7: Execution Instrument Details */}
+        {/* SECTION 6: Execution Instrument Details */}
         <section
           aria-label="Payment Method Details"
           className="bg-white rounded-[18px] p-6 border border-slate-200/50 flex justify-between items-center text-[13px]"
@@ -360,7 +360,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* SECTION 8: BOTTOM MARKETING SLIDER */}
+        {/* SECTION 7: Bottom Marketing Slider */}
         <section
           aria-label="Ongoing Promotional Campaign"
           role="region"
@@ -418,21 +418,10 @@ export default function App() {
           </div>
         </section>
 
-        {/* SECTION 9: Barcode Cryptographic Tracker */}
-        {/* <section aria-label="Barcode Scanner Module" className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-center">
-          <p className="text-[9px] text-slate-400 font-semibold tracking-widest mb-1">FBR Information.</p>
-          <div className="h-12 w-full bg-slate-950 flex items-stretch justify-between p-1.5 rounded" aria-hidden="true">
-            {[...Array(38)].map((_, i) => (
-              <div key={i} className={`bg-white ${i % 5 === 0 ? 'w-[1px]' : i % 3 === 0 ? 'w-[2.5px]' : 'w-[1.2px]'}`} />
-            ))}
-          </div>
-          <p className="text-xs font-semibold tracking-widest mt-2.5 text-slate-800 font-mono">{data.fbrInvoiceNo}</p>
-        </section> */}
-
-        {/* section 9 */}
+        {/* SECTION 8: FBR Barcode Module */}
         <FbrBarcodeModule data={data} />
 
-        {/* SECTION 10: Legal Entity Policy Footer */}
+        {/* SECTION 9: Legal Entity Policy Footer */}
         <footer className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-center space-y-4">
           <div className="text-xs space-y-1">
             <h4 className="font-semibold text-emerald-600 tracking-wider text-[13px] uppercase">
