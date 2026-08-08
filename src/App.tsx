@@ -59,6 +59,30 @@ const RATING_MAP: Record<string, string> = {
   'Best': 'best'
 };
 
+// const REVERSE_RATING_MAP: Record<string, string> = {
+//   'worst': 'Worst',
+//   'not_good': 'Not Good',
+//   'fine': 'Fine',
+//   'good': 'Good',
+//   'best': 'Best'
+// };
+
+
+// String ko strip aur normalize karke matching mapping
+const normalizeRating = (rawRating: string | number): string => {
+  if (!rawRating) return '';
+
+  const str = String(rawRating).toLowerCase().trim().replace(/[-_]/g, ' ');
+
+  if (str.includes('worst')) return 'Worst';
+  if (str.includes('not good') || str.includes('notgood')) return 'Not Good';
+  if (str.includes('fine')) return 'Fine';
+  if (str.includes('good')) return 'Good';
+  if (str.includes('best')) return 'Best';
+
+  return String(rawRating); // Fallback
+};
+
 // Helper for strict Comma Separation across numbers
 const formatMoney = (val: number) => {
   return (val || 0).toLocaleString('en-US');
@@ -97,11 +121,18 @@ export default function App() {
         }
 
         const data = await response.json();
+        console.log("FULL BACKEND RESPONSE:", data);
         setReceipt(data.invoice);
 
+        console.log("RAW BACKEND FEEDBACK:", data.invoice?.feedback);
+        console.log("NORMALIZED FEEDBACK:", normalizeRating(data.invoice?.feedback));
+
+
+        // Raw backend key (e.g. 'not_good', 'NOT_GOOD', 'Not Good') ko decode karo
         if (data.invoice?.feedback) {
+          const decodedLabel = normalizeRating(data.invoice.feedback);
+          setFeedback(decodedLabel);
           setFeedbackSubmitted(true);
-          setFeedback(data.invoice.feedback);
         }
       } catch (err) {
         setError('Could not load receipt');
@@ -112,7 +143,6 @@ export default function App() {
 
     loadReceipt();
   }, [hash]);
-
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
@@ -237,33 +267,44 @@ export default function App() {
               { label: 'Fine', emoji: '😑' },
               { label: 'Good', emoji: '😊' },
               { label: 'Best', emoji: '😍' }
-            ].map((item) => (
-              <button
-                key={item.label}
-                onClick={() => handleFeedback(item.label)}
-                className={`flex flex-col items-center px-2 py-1 rounded-lg transition-all ${feedback === item.label ? 'bg-slate-100 scale-105' : 'hover:bg-slate-50/50'
-                  }`}
-                aria-label={`Rate as ${item.label}`}
-              >
-                <span
-                  className={`text-3xl transition-all duration-200 ${feedback
-                    ? (feedback === item.label ? 'opacity-100 scale-110 grayscale-0' : 'opacity-20 grayscale')
-                    : 'opacity-90 hover:opacity-100'
-                    }`}
-                  role="img"
-                  aria-hidden="true"
-                >
-                  {item.emoji}
-                </span>
+            ].map((item) => {
+              const isSelected = feedback === item.label;
 
-                <span
-                  className={`text-[11px] font-normal mt-1.5 transition-colors ${feedback === item.label ? 'text-slate-800 font-semibold' : 'text-slate-400'
+              return (
+                <button
+                  key={item.label}
+                  disabled={feedbackSubmitted}
+                  onClick={() => handleFeedback(item.label)}
+                  className={`flex flex-col items-center px-2 py-1 rounded-lg transition-all ${isSelected
+                    ? 'bg-slate-100 scale-105 opacity-100 ring-2 ring-amber-400'
+                    : feedbackSubmitted
+                      ? 'opacity-20 grayscale cursor-not-allowed'
+                      : 'opacity-60 hover:opacity-100'
                     }`}
+                  aria-label={`Rate as ${item.label}`}
                 >
-                  {item.label}
-                </span>
-              </button>
-            ))}
+                  <span
+                    className={`text-3xl transition-all duration-200 ${isSelected
+                      ? 'opacity-100 scale-110 grayscale-0'
+                      : feedbackSubmitted
+                        ? 'opacity-20 grayscale'
+                        : 'opacity-90 hover:opacity-100'
+                      }`}
+                    role="img"
+                    aria-hidden="true"
+                  >
+                    {item.emoji}
+                  </span>
+
+                  <span
+                    className={`text-[11px] font-normal mt-1.5 transition-colors ${isSelected ? 'text-slate-800 font-semibold' : 'text-slate-400'
+                      }`}
+                  >
+                    {item.label}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </section>
 
@@ -443,7 +484,7 @@ export default function App() {
               <img
                 src="/leaf.jpeg"
                 alt="Green Leaf"
-                className="w-10 h-10 object-contain drop-shadow-sm select-none"
+                className="w-10 h-10 object-contain mix-blend-multiply border-none outline-none shadow-none"
               />
             </div>
           </div>
