@@ -247,8 +247,8 @@ export default function App() {
               >
                 <span
                   className={`text-3xl transition-all duration-200 ${feedback
-                      ? (feedback === item.label ? 'opacity-100 scale-110 grayscale-0' : 'opacity-20 grayscale')
-                      : 'opacity-90 hover:opacity-100'
+                    ? (feedback === item.label ? 'opacity-100 scale-110 grayscale-0' : 'opacity-20 grayscale')
+                    : 'opacity-90 hover:opacity-100'
                     }`}
                   role="img"
                   aria-hidden="true"
@@ -423,19 +423,32 @@ export default function App() {
 
         {/* SECTION 9: Legal Entity Policy Footer */}
         <footer className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-center space-y-4">
-          <div className="text-xs space-y-1">
-            <h4 className="font-semibold text-emerald-600 tracking-wider text-[13px] uppercase">
-              Let's Go Green
-            </h4>
-            <p className="text-[11px] text-slate-500 font-medium">
-              Paperless environment
-            </p>
-            <p className="text-[11px] text-slate-400">
-              Contributing to healthy society
-            </p>
+
+          {/* Let's Go Green Header with Right-Aligned Leaf Icon */}
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3.5 text-left">
+            <div className="space-y-0.5">
+              <h4 className="font-semibold text-emerald-600 tracking-wider text-[13px] uppercase">
+                Let's Go Green
+              </h4>
+              <p className="text-[11px] text-slate-500 font-medium leading-tight">
+                Paperless environment
+              </p>
+              <p className="text-[10px] text-slate-400 leading-tight">
+                Contributing to healthy society
+              </p>
+            </div>
+
+            {/* Right-Aligned Adjustable Leaf Asset */}
+            <div className="flex-shrink-0 ml-3">
+              <img
+                src="/leaf.jpeg"
+                alt="Green Leaf"
+                className="w-10 h-10 object-contain drop-shadow-sm select-none"
+              />
+            </div>
           </div>
 
-          <div className="text-[10px] text-slate-400 space-y-1 text-left border-t border-slate-100 pt-3.5">
+          <div className="text-[10px] text-slate-400 space-y-1 text-left pt-1">
             <p className="font-semibold text-slate-500 uppercase tracking-wider mb-1">Terms &amp; Conditions</p>
             <ul className="space-y-1 list-none">
               <li>• Refunds can be done within 4 days of purchase date along with sale receipt.</li>
