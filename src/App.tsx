@@ -5,7 +5,7 @@ import CustomerReceipt from './CustomerReceipt';
 
 // 2. Admin Portal Pages jo aapne Step 2 mein banaye
 import { AdminLogin } from './pages/AdminLogin';
-import { AdminTransactions } from './pages/AdminTransactions';
+import { AdminLayout } from './pages/AdminLayout';
 import { ProtectedRoute } from './components/ProtectedRoutes';
 
 export default function App() {
@@ -20,7 +20,7 @@ export default function App() {
 
                 {/* Admin Protected Route: Dashboard access guard */}
                 <Route element={<ProtectedRoute />}>
-                    <Route path="/admin/dashboard" element={<AdminTransactions />} />
+                    <Route path="/admin/dashboard" element={<AdminLayout />} />
                 </Route>
 
                 {/* Catch-All: Koi bhi irrelevant URL directly Admin Login par bhej dega */}
