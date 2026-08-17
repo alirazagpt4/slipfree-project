@@ -8,8 +8,9 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ activeTab }) => {
     const titles: Record<ActiveTab, string> = {
         transactions: 'Transactions',
-        segments: 'Customer List',
-        dashboard: 'Dashboard'
+        segments: 'Customer Segments List',
+        dashboard: 'Dashboard',
+        customers: 'Customers List'
     };
 
     return (

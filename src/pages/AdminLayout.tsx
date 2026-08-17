@@ -6,6 +6,7 @@ import { Sidebar } from '../components/Sidebar';
 import { Header } from '../components/Header';
 import type { ActiveTab } from '../components/Sidebar';
 import { CustomerSegmentsList } from './CustomerSegmentsList';
+import { CustomerList } from './CustomerList';
 
 // 1. IMPORT ACTUAL SCHEMA FROM YOUR TYPES FILE
 // import type { CustomerSegment, ApiResponse } from '../types/segment';
@@ -56,6 +57,10 @@ export const AdminLayout: React.FC = () => {
                         <div className="bg-white p-8 rounded-xl border border-slate-200 text-center text-slate-500 text-sm shadow-sm">
                             Dashboard Analytics View Placeholder
                         </div>
+                    )}
+
+                    {activeTab === 'customers' && (
+                        <CustomerList />
                     )}
                 </div>
             </main>
