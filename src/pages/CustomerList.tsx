@@ -1,35 +1,24 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 
 export interface Customer {
     phone: string;
     name: string;
     last_feedback: string;
+    city?: string;
+    dob?: string;
 }
 
 export const CustomerList: React.FC = () => {
     const [customers, setCustomers] = useState<Customer[]>([]);
     const [searchTerm, setSearchTerm] = useState<string>('');
-    const [debouncedSearch, setDebouncedSearch] = useState<string>('');
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [totalPages, setTotalPages] = useState<number>(1);
-    const [totalCount, setTotalCount] = useState<number>(0);
-
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [apiError, setApiError] = useState<string | null>(null);
 
     const abortControllerRef = useRef<AbortController | null>(null);
+    const itemsPerPage = 10;
 
-    // Debounce search query input (300ms delay)
-    useEffect(() => {
-        const handler = setTimeout(() => {
-            setDebouncedSearch(searchTerm);
-            setCurrentPage(1);
-        }, 300);
-
-        return () => clearTimeout(handler);
-    }, [searchTerm]);
-
-    // Production API Fetching
+    // Fetch Full Customer List from API
     const fetchCustomers = useCallback(async () => {
         if (abortControllerRef.current) abortControllerRef.current.abort();
         abortControllerRef.current = new AbortController();
@@ -41,13 +30,7 @@ export const CustomerList: React.FC = () => {
             const token = localStorage.getItem('admin_token');
             const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://slip.nexonsys.com/api/v1';
 
-            const queryParams = new URLSearchParams({
-                page: currentPage.toString(),
-                limit: '10',
-                search: debouncedSearch.trim(),
-            });
-
-            const response = await fetch(`${baseUrl}/customers/customers-list?${queryParams.toString()}`, {
+            const response = await fetch(`${baseUrl}/customers/customers-list`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -67,8 +50,6 @@ export const CustomerList: React.FC = () => {
                 : (data?.customers || data?.data || []);
 
             setCustomers(rawCustomers);
-            setTotalPages(data?.totalPages || 1);
-            setTotalCount(data?.totalCount || data?.totalRecords || rawCustomers.length);
 
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -81,14 +62,45 @@ export const CustomerList: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [currentPage, debouncedSearch]);
+    }, []);
 
     useEffect(() => {
         fetchCustomers();
     }, [fetchCustomers]);
 
-    // Status Badge Styling Helper Function
-    const getFeedbackBadgeClass = (feedback: string) => {
+    // Reset pagination on search
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(e.target.value);
+        setCurrentPage(1);
+    };
+
+    // Client-Side Search Filtering (Case-insensitive)
+    const filteredCustomers = useMemo(() => {
+        const query = searchTerm.toLowerCase().trim();
+        if (!query) return customers;
+
+        return customers.filter((customer) => {
+            const nameMatch = customer.name?.toLowerCase().includes(query);
+            const phoneMatch = customer.phone?.toString().includes(query);
+            const cityMatch = customer.city?.toLowerCase().includes(query);
+
+            return nameMatch || phoneMatch || cityMatch;
+        });
+    }, [customers, searchTerm]);
+
+    // Client-Side Pagination Logic
+    const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage) || 1;
+    const paginatedCustomers = useMemo(() => {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        return filteredCustomers.slice(startIndex, startIndex + itemsPerPage);
+    }, [filteredCustomers, currentPage]);
+
+    const formatPhoneNumber = (phone?: string) => {
+        if (!phone) return 'N/A';
+        return phone.toString().replace(/^\++/, '');
+    };
+
+    const getFeedbackBadgeClass = (feedback?: string) => {
         const normalized = feedback?.toLowerCase().trim();
         switch (normalized) {
             case 'rated':
@@ -105,14 +117,11 @@ export const CustomerList: React.FC = () => {
 
     return (
         <section className="p-6 max-w-7xl mx-auto space-y-6" aria-labelledby="customer-list-heading">
-            {/* Header Row: Title - Search Input - Total Count */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                {/* Left: Heading */}
                 <h1 id="customer-list-heading" className="text-xl font-bold text-slate-900 tracking-tight whitespace-nowrap">
                     Customers
                 </h1>
 
-                {/* Center / Right: Search Input & Total Count */}
                 <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
                     <div className="relative w-full sm:w-72">
                         <label htmlFor="customer-search" className="sr-only">
@@ -122,7 +131,7 @@ export const CustomerList: React.FC = () => {
                             id="customer-search"
                             type="text"
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={handleSearchChange}
                             placeholder="Search name or phone..."
                             className="w-full pl-9 pr-4 py-2 text-xs bg-white border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm"
                         />
@@ -137,29 +146,29 @@ export const CustomerList: React.FC = () => {
                         </svg>
                     </div>
 
-                    {/* Far Right: Total Count */}
                     <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">
-                        Total Customers: {totalCount}
+                        Total Customers: {filteredCustomers.length}
                     </span>
                 </div>
             </div>
 
-            {/* Main Table */}
             <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
                 <div className="overflow-x-auto relative" aria-busy={isLoading}>
                     <table className="w-full text-left border-collapse">
                         <caption className="sr-only">List of registered customers</caption>
                         <thead>
-                            <tr className="bg-slate-50/75 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                            <tr className="bg-slate-50/75 border-b border-slate-200 text-xs font-semibold text-slate-500 tracking-wider">
                                 <th scope="col" className="py-3.5 px-4">Customer Name</th>
                                 <th scope="col" className="py-3.5 px-4">Phone Number</th>
+                                <th scope="col" className="py-3.5 px-4">City</th>
+                                <th scope="col" className="py-3.5 px-4">Date of Birth</th>
                                 <th scope="col" className="py-3.5 px-4 text-center">Last Feedback</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
                             {isLoading ? (
                                 <tr>
-                                    <td colSpan={3} className="py-12 text-center text-slate-500 font-medium">
+                                    <td colSpan={5} className="py-12 text-center text-slate-500 font-medium">
                                         <div role="status" aria-live="polite" className="flex items-center justify-center gap-2">
                                             <svg className="animate-spin h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24">
                                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -171,7 +180,7 @@ export const CustomerList: React.FC = () => {
                                 </tr>
                             ) : apiError ? (
                                 <tr>
-                                    <td colSpan={3} className="py-12 text-center text-rose-600 font-medium">
+                                    <td colSpan={5} className="py-12 text-center text-rose-600 font-medium">
                                         <p>{apiError}</p>
                                         <button
                                             type="button"
@@ -182,14 +191,20 @@ export const CustomerList: React.FC = () => {
                                         </button>
                                     </td>
                                 </tr>
-                            ) : customers.length > 0 ? (
-                                customers.map((customer, index) => (
+                            ) : paginatedCustomers.length > 0 ? (
+                                paginatedCustomers.map((customer, index) => (
                                     <tr key={`${customer.phone}-${index}`} className="hover:bg-slate-50/50 transition-colors">
                                         <td className="py-3.5 px-4 font-bold text-slate-900">
-                                            {customer.name || 'N/A'}
+                                            {customer.name?.trim() || 'N/A'}
                                         </td>
                                         <td className="py-3.5 px-4 font-mono text-slate-600">
-                                            +{customer.phone || 'N/A'}
+                                            {formatPhoneNumber(customer.phone)}
+                                        </td>
+                                        <td className="py-3.5 px-4 text-slate-600">
+                                            {customer.city?.trim() || 'N/A'}
+                                        </td>
+                                        <td className="py-3.5 px-4 text-slate-600">
+                                            {customer.dob?.trim() || 'N/A'}
                                         </td>
                                         <td className="py-3.5 px-4 text-center">
                                             <span
@@ -197,14 +212,14 @@ export const CustomerList: React.FC = () => {
                                                     customer.last_feedback
                                                 )}`}
                                             >
-                                                {customer.last_feedback || 'Unrated'}
+                                                {customer.last_feedback?.trim() || 'Unrated'}
                                             </span>
                                         </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan={3} className="py-12 text-center text-slate-500 font-medium">
+                                    <td colSpan={5} className="py-12 text-center text-slate-500 font-medium">
                                         No records found.
                                     </td>
                                 </tr>
@@ -213,11 +228,10 @@ export const CustomerList: React.FC = () => {
                     </table>
                 </div>
 
-                {/* Footer Pagination */}
                 <div className="p-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
                     <p className="text-slate-500 font-medium" aria-live="polite">
-                        Showing <span className="font-bold text-slate-800">{customers.length}</span> of{' '}
-                        <span className="font-bold text-slate-800">{totalCount}</span> total records
+                        Showing <span className="font-bold text-slate-800">{paginatedCustomers.length}</span> of{' '}
+                        <span className="font-bold text-slate-800">{filteredCustomers.length}</span> total records
                     </p>
 
                     <div className="flex items-center gap-2">

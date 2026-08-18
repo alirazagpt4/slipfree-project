@@ -27,17 +27,18 @@ const NAV_ITEMS: NavItem[] = [
         ),
     },
     {
-        id: 'transactions',
-        label: 'Transactions List',
+        id: 'customers',
+        label: 'Customers',
         icon: (
             <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
         ),
     },
+
     {
         id: 'segments',
-        label: 'Customer Segments List',
+        label: 'Segments',
         icon: (
             <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -45,14 +46,15 @@ const NAV_ITEMS: NavItem[] = [
         ),
     },
     {
-        id: 'customers',
-        label: 'Customers List',
+        id: 'transactions',
+        label: 'Transactions',
         icon: (
             <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
         ),
     },
+
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -72,9 +74,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {/* Header / Collapse Toggle */}
                 <div className="flex items-center justify-between p-4 border-b border-slate-100">
                     {!isCollapsed && (
-                        <span className="font-bold text-slate-900 text-base tracking-tight truncate">
-                            Green Slip Admin
-                        </span>
+                        <div className="flex items-center gap-2 min-w-0">
+
+
+                            <span className="font-bold text-slate-900 text-base tracking-tight truncate">
+                                Green Slip Admin
+                            </span>
+                            <img
+                                src="/leaf.jpeg"
+                                alt=""
+                                aria-hidden="true"
+                                className="w-7.5 h-7.5 object-contain flex-shrink-0"
+                            />
+                        </div>
                     )}
                     <button
                         type="button"
