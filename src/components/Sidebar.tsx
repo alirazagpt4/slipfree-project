@@ -7,7 +7,7 @@ interface SidebarProps {
     onToggle: () => void;
     activeTab: ActiveTab;
     onTabChange: (tab: ActiveTab) => void;
-    onLogout?: () => void; // Added Logout Handler
+    onLogout?: () => void;
 }
 
 interface NavItem {
@@ -35,7 +35,6 @@ const NAV_ITEMS: NavItem[] = [
             </svg>
         ),
     },
-
     {
         id: 'segments',
         label: 'Segments',
@@ -54,7 +53,6 @@ const NAV_ITEMS: NavItem[] = [
             </svg>
         ),
     },
-
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -75,8 +73,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <div className="flex items-center justify-between p-4 border-b border-slate-100">
                     {!isCollapsed && (
                         <div className="flex items-center gap-2 min-w-0">
-
-
                             <span className="font-bold text-slate-900 text-base tracking-tight truncate">
                                 Green Slip Admin
                             </span>
@@ -127,44 +123,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </nav>
             </div>
 
-            {/* Footer Profile & Logout Block */}
-            <div className="p-3 border-t border-slate-100 bg-slate-50/50 flex flex-col gap-2">
-                <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-3 truncate">
-                        <div className="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
-                            A
-                        </div>
-                        {!isCollapsed && (
-                            <div className="flex flex-col truncate">
-                                <span className="text-xs font-bold text-slate-900 truncate">Admin Account</span>
-                                <span className="text-[10px] text-slate-500 font-medium truncate">System Operator</span>
-                            </div>
-                        )}
-                    </div>
+            {/* Footer Section - Conditional Rendering Based on Collapse */}
+            <div className={`p-3 border-t border-slate-100 bg-slate-50/50 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
+                {/* Logo visible strictly when expanded */}
+                {!isCollapsed && (
+                    <img
+                        src="/LOGO.jpg"
+                        alt="Company Logo"
+                        className="h-10 w-auto max-w-[150px] object-contain shrink-0"
+                    />
+                )}
 
-                    {!isCollapsed && onLogout && (
-                        <button
-                            type="button"
-                            onClick={onLogout}
-                            aria-label="Logout from Admin Account"
-                            title="Logout"
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition focus:outline-none focus:ring-2 focus:ring-rose-500"
-                        >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
-                        </button>
-                    )}
-                </div>
-
-                {/* Collapsed View Logout Option */}
-                {isCollapsed && onLogout && (
+                {/* Logout button adapts position on collapse */}
+                {onLogout && (
                     <button
                         type="button"
                         onClick={onLogout}
-                        aria-label="Logout from Admin Account"
+                        aria-label="Logout"
                         title="Logout"
-                        className="w-full flex justify-center items-center py-2 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition focus:outline-none focus:ring-2 focus:ring-rose-500"
+                        className="p-2 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition focus:outline-none focus:ring-2 focus:ring-rose-500 shrink-0"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

@@ -60,14 +60,21 @@ src/
     AdminLogin.tsx               # admin login form -> POST /admin/login
     AdminLayout.tsx               # admin shell: sidebar + header + tab switcher (NOT sub-routes)
     AdminTransactions.tsx          # invoice list, filters, segment builder, print modal
-    CustomerList.tsx                # paginated customer directory
+    CustomerList.tsx                # customer directory: fetches the full list once, then
+                                       # searches/paginates entirely client-side (same pattern
+                                       # as AdminTransactions), plus a row-selection UI with no
+                                       # wired-up bulk action yet (see docs/ARCHITECTURE.md)
     CustomerSegmentsList.tsx        # saved marketing segments + customer-list modal
   types/
     segment.ts                       # shared Customer/CustomerSegment/FilterCriteria types
                                        # (NOTE: duplicated, slightly differently, inline in
                                        # CustomerList.tsx and CustomerSegmentsList.tsx instead
                                        # of importing from here — see docs/ARCHITECTURE.md)
-public/                                # static assets served as-is (banner.webp, leaf.jpeg, logo*.webp, favicon.svg, icons.svg)
+public/                                # static assets served as-is: banner.webp, leaf.jpeg,
+                                       # men.webp, favicon.svg, icons.svg, LOGO.jpg (sidebar
+                                       # footer logo, see below). logo1/2/3.webp and
+                                       # LOGO_blk.webp are NOT referenced anywhere in src/ —
+                                       # unused/leftover, same category as App.css/icons.svg below.
 ```
 
 ## Important quirks & known issues (read before changing auth/admin code)
@@ -96,11 +103,29 @@ public/                                # static assets served as-is (banner.webp
     (lots of `any`, defensive fallback field-name checks like
     `data?.customers || data?.data || []`). Verify actual API shape before trusting `interface`s.
 - **`src/types/segment.ts` is only partially used.** `AdminLayout.tsx` even has the import
-  commented out. `CustomerList.tsx` and `CustomerSegmentsList.tsx` each redeclare their own
-  local `Customer`/`CustomerSegment` interfaces that don't quite match `types/segment.ts`
-  or each other (e.g. `feedback` is required in one, optional in another). If you're doing
-  a cleanup pass, this is a good candidate — but don't unify silently, confirm real API
-  shape first.
+  commented out. `CustomerSegmentsList.tsx` redeclares its own local `Customer`/
+  `CustomerSegment` that don't quite match `types/segment.ts` (e.g. `feedback` is required
+  in `types/segment.ts`, optional in `CustomerSegmentsList.tsx`). `CustomerList.tsx` has
+  its own, unrelated `Customer` interface (`id?`, `name`, `phone`, `email?`, `city?`,
+  `created_at?`) for the customer-directory table — it has no `feedback`/`last_feedback`
+  field at all, so don't assume it's the same shape as the other two `Customer` types just
+  because they share a name. If you're doing a cleanup pass, this divergence is a good
+  candidate to unify — but confirm the real API shape first, don't unify silently.
+- **`CustomerList.tsx` fetches the entire customer list once, unfiltered/unpaginated,
+  and does search + pagination client-side** — same pattern as `AdminTransactions.tsx`.
+  It no longer sends `page`/`limit`/`search` query params to `/customers/customers-list`
+  despite the endpoint name suggesting server-side listing; see
+  [`docs/API.md`](docs/API.md). This is fine at current data volumes but, like the
+  `/admin/invoices` note in `API.md`, will need real server-side pagination if the
+  customer count grows. The table also has a row-selection UI (checkboxes, "select all on
+  page", a "N selected / Deselect all" toolbar) with **no bulk action wired to it yet** —
+  selection is currently local-only state.
+- **Sidebar footer shows a static company logo, not a user profile.** `Sidebar.tsx`'s
+  footer renders `public/LOGO.jpg` (visible only when the sidebar is expanded) next to the
+  logout button — there is no "Admin Account / System Operator" block anymore (that was
+  removed; don't reintroduce it as if it were still current). `public/LOGO_blk.webp` was
+  added alongside `LOGO.jpg` but isn't referenced anywhere — likely an alternate/dark-mode
+  logo staged for later use.
 - **`src/App.css` and `public/icons.svg`** are unused leftovers from the default
   Vite+React template (`.hero`, `#next-steps`, social icons for Bluesky/Discord/etc.).
   Not imported/rendered anywhere. Safe to ignore or remove.

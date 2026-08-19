@@ -107,8 +107,9 @@ Not a router — a plain component with local state:
   bug in the root `CLAUDE.md`** (it clears `adminToken`, not the `admin_token` key actually used).
 
 `Sidebar` and `Header` are presentational — they receive `activeTab` + callbacks as props
-and don't fetch anything themselves. `Sidebar` also renders a static "Admin Account / System
-Operator" profile block (not populated from any real user API).
+and don't fetch anything themselves. `Sidebar`'s footer renders a static company logo
+(`public/LOGO.jpg`, shown only when expanded) next to the logout button — it does not show
+any user/account info (there is no per-admin profile data anywhere in the frontend).
 
 ### 4.3 Transactions tab (`AdminTransactions.tsx`)
 
@@ -148,16 +149,27 @@ Each segment has:
 
 ### 4.5 Customers tab (`CustomerList.tsx`)
 
-A paginated, server-side-searched customer directory:
-- `GET /customers/customers-list?page&limit=10&search=` (Bearer auth).
-- Search input is **debounced 300ms** before triggering a refetch, and resets `currentPage`
-  to 1 on every new search term.
-- Uses an `AbortController` to cancel the previous in-flight request if the user types
-  again or changes page before the last request resolved (so slow/duplicate responses
-  can't race and overwrite newer results — except the intentional "ignore AbortError" in
-  the catch block).
-- Table shows name, phone, and a "Last Feedback" badge (color-coded by
-  `getFeedbackBadgeClass`, matching values like `rated`/`positive`/`unrated`/`negative`).
+A customer directory that mirrors `AdminTransactions.tsx`'s pattern: one full fetch, then
+everything else client-side:
+- `GET /customers/customers-list` (Bearer auth) — fetched **once** on mount, no
+  `page`/`limit`/`search` query params sent despite the endpoint name.
+- An `AbortController` cancels any in-flight request if `fetchCustomers` is re-invoked
+  (e.g. via the Retry button) before the previous one resolved — the catch block
+  intentionally ignores `AbortError`.
+- Search (`searchTerm`) and pagination (`currentPage`, 10/page) are both computed
+  client-side with `useMemo` over the full loaded `customers` array — same shape as
+  `processedInvoices` in `AdminTransactions.tsx`. Search matches name, phone, email, or
+  city (case-insensitive substring). Typing resets `currentPage` to 1.
+- Table shows Name, Phone, Email, City — there is **no feedback/rating column** on this
+  screen (that only exists on the Transactions tab and, indirectly, in segment
+  `customer_list` snapshots).
+- Rows have a checkbox-based **selection UI**: per-row toggle, "select all on this page"
+  (only affects the current page's rows), and a toolbar that appears once anything is
+  selected (`"N customer(s) selected"` + "Deselect all"). Selection is tracked as a
+  `Set<string>` of composite keys (`customer.id` if present, else `phone-index`) purely in
+  local state — **no bulk action consumes the selection yet** (no export, no
+  "add to segment", nothing sent to the API). If you're asked to wire up a bulk action,
+  this selection state is already in place to build on.
 
 ### 4.6 Dashboard tab
 
@@ -167,8 +179,8 @@ implementation yet.
 ## 5. Auth model summary
 
 - Single admin-wide token (`localStorage.admin_token`), no per-user roles/permissions in
-  the frontend — the Sidebar's "Admin Account / System Operator" label is static, not
-  derived from the token.
+  the frontend — there's no per-admin identity anywhere in the UI (the Sidebar footer
+  shows a static company logo, not an account/user label).
 - No token refresh; if the token expires server-side, individual admin screens will just
   show their generic fetch-error UI rather than redirecting to login.
 - `CustomerReceipt` (the public receipt page) never sends an `Authorization` header — it's
@@ -185,7 +197,10 @@ full TS interfaces — the most complete one is `Invoice`/`Item`/`Feedback` in
   payment_mode, created_at, `items: Item[]`, `feedback: Feedback | null`.
 - **Item**: product_name, item_name, color, size, quantity, unit_price, gst_percent, total_price.
 - **Feedback**: id, rating, comment, submitted_at.
-- **Customer** (directory): phone, name, last_feedback (three different, slightly
-  inconsistent shapes exist across files — see the "known issues" note in the root
-  `CLAUDE.md`).
+- **Customer**: three unrelated shapes exist across files, sharing only the type name —
+  see the "known issues" note in the root `CLAUDE.md`. The customer-directory one
+  (`CustomerList.tsx`) is `{ id?, name, phone, email?, city?, created_at? }`, with **no**
+  feedback/rating field. `CustomerSegmentsList.tsx` and `types/segment.ts` each have their
+  own, feedback-bearing `{ customer_name, customer_phone, feedback? }`-shaped `Customer`
+  used only inside segment `customer_list`s.
 - **CustomerSegment**: id, segment_name, filter_criteria, total_customers, customer_list.

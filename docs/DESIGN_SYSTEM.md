@@ -48,7 +48,9 @@ A single scrollable column of white rounded cards on a light blue-grey backdrop
 ### B. Admin portal — "operational dashboard"
 Denser, data-table-driven UI, closer to a typical SaaS back-office:
 - Layout: fixed-height `flex h-screen` app shell — `Sidebar` (fixed width, collapsible)
-  + main column (`Header` + scrollable content `p-6`).
+  + main column (`Header` + scrollable content `p-6`). `Sidebar`'s footer shows a static
+  company logo (`public/LOGO.jpg`, hidden when collapsed) next to the logout button —
+  there's no per-admin identity/avatar anywhere in the UI.
 - Card radius: standard Tailwind `rounded-xl` / `rounded-lg` (not the bespoke `18px` used
   on the receipt page) with `border-slate-200` + `shadow-sm` — flatter, more utilitarian.
 - Tables: `text-xs`, `divide-y divide-slate-100` rows, uppercase `text-[11px]
@@ -80,10 +82,12 @@ Denser, data-table-driven UI, closer to a typical SaaS back-office:
 | Warning / neutral-attention | `amber-*` | "Fine" rating badge, "unrated" customer badge, selected-emoji ring |
 | Info accent (segments) | `blue-*` | segment count pill, "View" button in Segments tab |
 
-**Consistency note:** the admin transactions rating badges (`emerald`/`amber`/`rose`) and
-the customer-directory feedback badges (`emerald`/`amber`/`rose` via
-`getFeedbackBadgeClass`) intentionally use the same three-color success/warning/danger
-mapping — keep that mapping if you add another "status" indicator anywhere else.
+**Consistency note:** the admin transactions rating badges (`renderRatingBadge` in
+`AdminTransactions.tsx`) use an `emerald`/`amber`/`rose` success/warning/danger mapping —
+keep that mapping if you add another "status" indicator anywhere else. (The customer
+directory, `CustomerList.tsx`, no longer has a feedback/status column or badge at all —
+its `getFeedbackBadgeClass` helper was removed along with the `last_feedback` field when
+the table was reworked to show Name/Phone/Email/City instead.)
 
 ## 4. Interaction / accessibility conventions
 

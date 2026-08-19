@@ -40,7 +40,9 @@ Auth: `Authorization: Bearer <admin_token>`
 Expected response: `{ success: boolean, invoices: Invoice[] }`. **All filtering/sorting is
 client-side** — this endpoint is expected to return the full invoice set the admin can
 see; there is no `page`/`limit`/filter query param sent here today. If the invoice volume
-grows, this is the first place that will need server-side pagination.
+grows, this — along with `/customers/customers-list` below, which follows the same
+fetch-everything-then-filter-client-side pattern — is where server-side pagination will
+be needed first.
 
 ### `POST /segments`
 Called by: `src/pages/AdminTransactions.tsx` (`handleSaveSegment`)
@@ -72,11 +74,13 @@ data?.data || [])`). Each segment: `{ id, segment_name, total_customers, custome
 ### `GET /customers/customers-list`
 Called by: `src/pages/CustomerList.tsx`
 Auth: `Authorization: Bearer <admin_token>`
-Query params: `page` (number, 1-indexed), `limit` (fixed at `10`), `search` (free text,
-debounced 300ms client-side, matched against name/phone server-side presumably).
+Query params: **none.** The frontend fetches the full customer list once on mount (no
+`page`/`limit`/`search` sent) and does search + pagination client-side, same as
+`GET /admin/invoices` below — see the scaling note there, it applies here too.
 Expected response: an array, or `{ customers: [...] }`, or `{ data: [...] }` (same
-defensive pattern as `/segments`), plus `totalPages` and `totalCount`/`totalRecords` for
-pagination. Each customer: `{ phone, name, last_feedback }`.
+defensive pattern as `/segments`). No pagination metadata (`totalPages`/`totalCount`) is
+read from the response since the frontend doesn't request server-side paging. Each
+customer: `{ id?, name, phone, email?, city?, created_at? }` — no feedback/rating field.
 
 ## Not yet implemented (frontend has UI, no backend call)
 
@@ -85,6 +89,9 @@ pagination. Each customer: `{ phone, name, last_feedback }`.
   wire this up, this is the button (`handleSendToWhatsApp`) and this is the doc to update
   afterward.
 - **Dashboard analytics tab** — no data/API wired up at all, just a placeholder string.
+- **Customer directory row selection** (`CustomerList.tsx`) — checkboxes and a "N
+  selected" toolbar exist, but nothing consumes the selection (no bulk export, no
+  "add to segment", no delete). It's local component state only, no API call.
 
 ## Auth summary
 
