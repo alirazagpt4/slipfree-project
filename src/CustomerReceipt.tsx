@@ -23,6 +23,7 @@ function mapReceiptData(invoice: any) {
     customerPhone: invoice.customer_phone || null,
     timings: "Open 11:00 AM - 11:00 PM",
     storeNo: String(invoice.store_id),
+    currency: invoice.currency || "Rs",
 
     bottomBanners: [
       { img: `${import.meta.env.BASE_URL}men.webp` },
@@ -334,9 +335,9 @@ export default function App() {
                   </div>
                 </div>
                 <div className="text-right space-y-1 flex-shrink-0">
-                  <span className="font-normal text-slate-800 block">Total: Rs. {formatMoney(item.total)}</span>
+                  <span className="font-normal text-slate-800 block">Total: {data.currency} {formatMoney(item.total)}</span>
                   <div className="text-slate-400 text-xs font-normal space-y-0.5">
-                    <p>Unit Price: Rs. {formatMoney(item.price)}</p>
+                    <p>Unit Price: {data.currency} {formatMoney(item.price)}</p>
                   </div>
                 </div>
               </div>
@@ -348,27 +349,27 @@ export default function App() {
         <section aria-label="Ledger Summary" className="bg-white rounded-[18px] p-6 border border-slate-200/50 text-[13px] space-y-2.5 text-slate-500">
           <div className="flex justify-between">
             <span>Excluded Tax</span>
-            <span className="text-slate-400">Rs. {formatMoney(data.summary.price_excl_tax)}</span>
+            <span className="text-slate-400">{data.currency} {formatMoney(data.summary.price_excl_tax)}</span>
           </div>
           <div className="flex justify-between">
             <span>Total GST</span>
-            <span className="text-slate-400">Rs. {formatMoney(data.summary.gst)}</span>
+            <span className="text-slate-400">{data.currency} {formatMoney(data.summary.gst)}</span>
           </div>
           <div className="flex justify-between">
             <span>POS Fee</span>
-            <span className="text-slate-400">Rs. {formatMoney(data.summary.posFee)}</span>
+            <span className="text-slate-400">{data.currency} {formatMoney(data.summary.posFee)}</span>
           </div>
           <div className="flex justify-between">
             <span>Discount</span>
-            <span className="text-slate-400">Rs. {formatMoney(data.summary.discount)}</span>
+            <span className="text-slate-400">{data.currency} {formatMoney(data.summary.discount)}</span>
           </div>
           <div className="flex justify-between pb-3.5 border-b border-slate-100">
             <span>Total</span>
-            <span className="text-slate-400">Rs. {formatMoney(data.summary.total)}</span>
+            <span className="text-slate-400">{data.currency} {formatMoney(data.summary.total)}</span>
           </div>
           <div className="flex justify-between text-lg font-normal text-slate-800 pt-2">
             <span className="font-semibold tracking-wide">Paid</span>
-            <span className="text-black font-semibold">Rs. {formatMoney(data.summary.payable)}</span>
+            <span className="text-black font-semibold">{data.currency} {formatMoney(data.summary.payable)}</span>
           </div>
         </section>
 
@@ -513,7 +514,15 @@ export default function App() {
               />
             </div>
             <div className="text-[10px] font-medium text-slate-500">
-              Powered by AVERON Solutions
+              Powered by{' '}
+              <a
+                href="https://averonsol.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-600 hover:text-slate-900 hover:underline transition-colors focus:outline-none focus:ring-1 focus:ring-slate-400 rounded-sm"
+              >
+                AVERON Solutions
+              </a>
             </div>
           </div>
         </footer>
