@@ -503,8 +503,18 @@ export default function App() {
             </ul>
           </div>
 
-          <div className="text-[9px] text-slate-400/80 font-medium pt-2 border-t border-slate-100 tracking-wide">
-            Powered by SlipFree Systems
+          <div className="text-center pt-2 border-t border-slate-100 space-y-0.5">
+            <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-slate-800 tracking-wide">
+              <span>Green Slip</span>
+              <img
+                src="/leaf.svg"
+                alt="Green Leaf"
+                className="w-4 h-4 object-contain inline-block"
+              />
+            </div>
+            <div className="text-[10px] font-medium text-slate-500">
+              Powered by AVERON Solutions
+            </div>
           </div>
         </footer>
 
